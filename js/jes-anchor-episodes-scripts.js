@@ -1,55 +1,58 @@
 // Your site url (must include https://anchor.fm/)
-const siteUrl = window.jesAnchorEpisodesSiteUrl
+const siteUrl = window.jesAnchorEpisodesSiteUrl;
 // Get position to split url for modification seen below
-const urlModPosition = siteUrl.length
+const urlModPosition = siteUrl.length;
 // RSS feed URL (site key is found in RSS feed URL)
-const rssUrl = window.jesAnchorEpisodesRssUrl
+const rssUrl = window.jesAnchorEpisodesRssUrl;
 // Container which holds the iframe - so that we can append the podcast list just below it
-const iframeContainer = document.getElementById('podcasts-player-container')
+const iframeContainer = document.getElementById('podcasts-player-container');
 
 // Use feednami to parse the RSS in to JSON and give us a JSON object
 feednami.load(rssUrl).then((feed) => {
 	// Add the container for the list before the loop
-	iframeContainer.innerHTML += `<div id="podcast-list-container" class="styles__episodeFeed___3mOKz"></div>`
-	const podcastListContainer = document.getElementById('podcast-list-container')
+	iframeContainer.innerHTML += `<div id="podcast-list-container" class="styles__episodeFeed___3mOKz"></div>`;
+	const podcastListContainer = document.getElementById(
+		'podcast-list-container'
+	);
 
 	// Loop through the JSON to produce the list
 	for (const entry of feed.entries) {
 		// add '/embed' to URL so that it works in an iframe
-		const originalURL = entry.link
-		const pathToAdd = '/embed'
+		const originalURL = entry.link;
+		const pathToAdd = '/embed';
 		const revisedUrl = [
 			originalURL.slice(0, urlModPosition),
 			pathToAdd,
 			originalURL.slice(urlModPosition),
-		].join('')
+		].join('');
 
 		// create an excerpt out of the title
-		const c = entry.title
-		const clength = 31
-		const titleExcerpt = c.substring(0, clength) + '...'
+		const c = entry.title;
+		const clength = 41;
+		const titleExcerpt = c.substring(0, clength) + '...';
 
 		// create an excerpt out of the description
-		const d = entry.description
-		const dlength = 114
-		const descriptionExcerpt = d.substring(0, dlength) + '...'
+		const d = entry.description.replace(/<[^>]*>?/gm, ''); // strip html also
+		const dlength = 114;
+		const descriptionExcerpt = d.length > dlength ? d.substring(0, dlength) : d;
+		const hasDescriptionExcerpt = d.length > dlength ? true : false;
 
 		// get minutes and seconds from seconds formatted data
-		let time = entry['itunes:duration']['#']
-		const minutes = Math.floor(time / 60)
-		const seconds = time - minutes * 60
-		const hours = Math.floor(time / 3600)
-		time = time - hours * 3600
+		let time = entry['itunes:duration']['#'];
+		const minutes = Math.floor(time / 60);
+		const seconds = time - minutes * 60;
+		const hours = Math.floor(time / 3600);
+		time = time - hours * 3600;
 
-		function str_pad_left(string, pad, length) {
-			return (new Array(length + 1).join(pad) + string).slice(-length)
-		}
+		const str_pad_left = (string, pad, length) => {
+			return (new Array(length + 1).join(pad) + string).slice(-length);
+		};
 
 		const finalTime =
-			str_pad_left(minutes, '0', 2) + ':' + str_pad_left(seconds, '0', 2)
+			str_pad_left(minutes, '0', 2) + ':' + str_pad_left(seconds, '0', 2);
 
 		// convert JSON ISO 8601 formatted date in to a readable date
-		const date = new Date(entry.date)
+		const date = new Date(entry.date);
 		const monthNames = [
 			'January',
 			'February',
@@ -63,10 +66,10 @@ feednami.load(rssUrl).then((feed) => {
 			'October',
 			'November',
 			'December',
-		]
-		const month = monthNames[date.getMonth()]
-		const day = date.getDate()
-		const year = date.getFullYear()
+		];
+		const month = monthNames[date.getMonth()];
+		const day = date.getDate();
+		const year = date.getFullYear();
 
 		// Output the episode on the page with the data we have prepared
 		podcastListContainer.innerHTML += `
@@ -87,10 +90,15 @@ feednami.load(rssUrl).then((feed) => {
                   </div>
                 </a>
                 <div class="styles__episodeDescription___C3oZg ">
-                  <div class="styles__expander___1NNVb styles__expander--dark___3Qxhe" style="overflow: hidden;">
+                  <div class="styles__expander___1NNVb styles__expander--dark___3Qxhe">
                     <div>
-                      <div>
+                      <div class="podcast-description">
                         ${descriptionExcerpt}
+						${
+							hasDescriptionExcerpt
+								? `<span class="podcast-description-show-more-btn" data-full-description="${d}">...</span>`
+								: ''
+						}
                       </div>
                     </div>
                   </div>
@@ -102,16 +110,45 @@ feednami.load(rssUrl).then((feed) => {
                   ${month} ${day}, ${year}
                 </div>
               </div>
-            `
+            `;
 	}
-})
+});
+
+const checkShowMoreBtnsExist = setInterval(() => {
+	if (
+		document.getElementsByClassName('podcast-description-show-more-btn').length
+	) {
+		setShowMoreEvents();
+		clearInterval(checkShowMoreBtnsExist);
+	}
+}, 100); // check every 100ms
+
+const setShowMoreEvents = () => {
+	const showMoreBtns = document.getElementsByClassName(
+		'podcast-description-show-more-btn'
+	);
+	console.log(showMoreBtns);
+	for (i = 0; i < showMoreBtns.length; i++) {
+		showMoreBtns[i].addEventListener('click', (e) => {
+			e = e || window.event;
+			const target = e.target || e.srcElement;
+			const description = target.dataset.fullDescription;
+			target.parentElement.innerHTML = description;
+		});
+	}
+};
 
 // set responsive breakpoint for the player iframe - adjust height
-const anchorIframe = document.getElementById('anchor-podcast-iframe')
-const anchorIframeWidth = anchorIframe.offsetWidth
+const anchorIframe = document.getElementById('anchor-podcast-iframe');
+const anchorIframeWidth = anchorIframe.offsetWidth;
+const loadingAnimation = document.getElementById(
+	'podcast-player-loading-animation'
+);
 
-if( anchorIframeWidth > 768 ) {
-    anchorIframe.style.height = '150px'
+if (anchorIframeWidth > 768) {
+	anchorIframe.style.height = '161px';
+	loadingAnimation.style.top = '40px';
 } else {
-    anchorIframe.style.height = '98px'
+	anchorIframe.style.height = '98px';
+	loadingAnimation.style.top = '10px';
 }

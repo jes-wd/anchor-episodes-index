@@ -91,7 +91,7 @@ class JES_Anchor_Settings_Page {
 
 		// Field output.
 		echo '<input type="url" name="jes_anchor_settings[site_url]" class="regular-text site_url_field" placeholder="' . esc_attr__( '', 'text_domain' ) . '" value="' . esc_attr( $value ) . '">';
-		echo '<p class="description">' . __( 'Looks like https://anchor.fm/{YOUR SITE NAME}', 'text_domain' ) . '</p>';
+		echo '<p class="description">' . __( 'Looks like https://anchor.fm/{YOUR SITE NAME} (make sure there is no "/" at the end)', 'text_domain' ) . '</p>';
 
 	}
 
@@ -105,7 +105,7 @@ class JES_Anchor_Settings_Page {
 
 		// Field output.
 		echo '<input type="url" name="jes_anchor_settings[anchor_rss_url]" class="regular-text anchor_rss_url_field" placeholder="' . esc_attr__( '', 'text_domain' ) . '" value="' . esc_attr( $value ) . '">';
-		echo '<p class="description">' . __( 'Found in your Anchor settings. Looks like https://anchor.fm/s/{YOUR SITE KEY}/podcast/rss', 'text_domain' ) . '</p>';
+		echo '<p class="description">' . __('Found in your Anchor settings. Looks like https://anchor.fm/s/{YOUR SITE KEY}/podcast/rss (make sure there is no "/" at the end)', 'text_domain' ) . '</p>';
 
 	}
 

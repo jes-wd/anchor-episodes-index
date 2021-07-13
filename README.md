@@ -2,7 +2,7 @@
 ## WordPress plugin
 ###### Available on the wordpress.org plugin repository
 
-This started off with an article I wrote [here](https://jeswebdevelopment.com/add-an-episode-index-to-the-anchor-podcasts-embed-player/) explaining how make an episode index to the anchor.fm podcast player embed, as this is something that is lacking in the standard player. 
+This started off with an article I wrote [here](https://jeswebdevelopment.com/add-an-episode-index-to-the-anchor-podcasts-embed-player/) explaining how to make an episode index to the anchor.fm podcast player embed, as this is something that is lacking in the standard player. 
 
 Due to the popularity of that article, I made an embed maker, which you can see [here](https://anchor-embed.jeswebdevelopment.com/) and a WordPress plugin, which is the repository you are looking at now. 
 

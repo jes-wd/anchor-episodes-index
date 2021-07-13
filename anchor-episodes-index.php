@@ -3,7 +3,7 @@
 /**
  * Plugin Name: Anchor Episodes Index
  * Description: A lightweight plugin that allows you to output an anchor.fm podcast player on your site that includes an episode index. Just add two URL's on the settings page, grab the shortcode, and you're good to go!
- * Version: 1.0
+ * Version: 1.1.0
  * Author: JES Web Development
  * Author URI: https://jeswebdevelopment.com
  * License: GPLv2 or later
@@ -19,11 +19,9 @@ define('JES_ANCHOR_EPISODES_PLUGIN_PATH', plugin_dir_path(__FILE__));
 
 // register scripts but do not enqueue
 function jes_anchor_episodes_register_scripts() {
-
-    wp_register_style('jes-anchor-episodes-styles', plugins_url('jes-anchor-episodes/css/jes-anchor-episodes-styles.css'), array(), '1.0.0', 'all');
-    wp_register_script('jes-anchor-episodes-feednami', plugins_url('jes-anchor-episodes/js/feednami-client-v1.1.js'));
-    wp_register_script('jes-anchor-episodes-scripts', plugins_url('jes-anchor-episodes/js/jes-anchor-episodes-scripts.js'));
-
+    wp_register_style('jes-anchor-episodes-styles', plugins_url('anchor-episodes-index/css/jes-anchor-episodes-styles.css'), array(), '1.0.0', 'all');
+    wp_register_script('jes-anchor-episodes-feednami', plugins_url('anchor-episodes-index/js/feednami-client-v1.1.js'));
+    wp_register_script('jes-anchor-episodes-scripts', plugins_url('anchor-episodes-index/js/jes-anchor-episodes-scripts.js'));
 }
 
 add_action('wp_enqueue_scripts', 'jes_anchor_episodes_register_scripts');
@@ -44,6 +42,7 @@ function jes_anchor_episodes_init($atts) {
     // return html
     return '
         <div id="podcasts-player-container">
+            <div id="podcast-player-loading-animation" class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
             <iframe id="anchor-podcast-iframe" src="' . $site_url . '/embed" style="width: 100%;" frameborder="0" scrolling="no" name="iframe"></iframe>
         </div>
         <script>
