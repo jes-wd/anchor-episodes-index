@@ -20,8 +20,8 @@ define('JES_ANCHOR_EPISODES_PLUGIN_PATH', plugin_dir_path(__FILE__));
 // register scripts but do not enqueue
 function jes_anchor_episodes_register_scripts() {
     wp_register_style('jes-anchor-episodes-styles', plugins_url('anchor-episodes-index/css/jes-anchor-episodes-styles.css'), array(), '1.0.0', 'all');
-    wp_register_script('jes-anchor-episodes-feednami', plugins_url('anchor-episodes-index/js/feednami-client-v1.1.js'));
-    wp_register_script('jes-anchor-episodes-scripts', plugins_url('anchor-episodes-index/js/jes-anchor-episodes-scripts.js'));
+    wp_register_script('jes-anchor-episodes-feednami', plugins_url('anchor-episodes-index/js/feednami-client-v1.1.js'), array(), '1.0.0', true);
+    wp_register_script('jes-anchor-episodes-scripts', plugins_url('anchor-episodes-index/js/jes-anchor-episodes-scripts.js'), array(), '1.0.0', true);
 }
 
 add_action('wp_enqueue_scripts', 'jes_anchor_episodes_register_scripts');
@@ -31,6 +31,7 @@ function jes_anchor_episodes_init($atts) {
     $shortcode_attributes = shortcode_atts( array(
 		'site_url' => '',
 		'rss_url' => '',
+        'max_episodes' => ''
 	), $atts );
 
 
@@ -39,12 +40,14 @@ function jes_anchor_episodes_init($atts) {
     wp_enqueue_script('jes-anchor-episodes-feednami');
     wp_enqueue_script('jes-anchor-episodes-scripts');
 
-    // Retrieve settings page data from the database
+    // Retrieve settings page data
     $options = get_option('jes_anchor_settings');
     $site_url_from_options = isset($options['site_url']) ? $options['site_url'] : '';
-    $anchor_rss_url_from_options = isset($options['anchor_rss_url']) ? $options['anchor_rss_url'] : '';
     $site_url = strlen($shortcode_attributes['site_url']) > 0 ? $shortcode_attributes['site_url'] : $site_url_from_options;
+    $anchor_rss_url_from_options = isset($options['anchor_rss_url']) ? $options['anchor_rss_url'] : '';
     $anchor_rss_url = strlen($shortcode_attributes['rss_url']) > 0 ? $shortcode_attributes['rss_url'] : $anchor_rss_url_from_options;
+    $max_episodes_from_options = isset($options['max_episodes']) ? (int) $options['max_episodes'] : 999;
+    $max_episodes = strlen($shortcode_attributes['max_episodes']) > 0 ? (int) $shortcode_attributes['max_episodes'] : $max_episodes_from_options;
 
     // return html
     return '
@@ -55,6 +58,7 @@ function jes_anchor_episodes_init($atts) {
         <script>
             window.jesAnchorEpisodesSiteUrl = "' . $site_url . '";
             window.jesAnchorEpisodesRssUrl =  "' . $anchor_rss_url . '";
+            window.jesAnchorMaxEpisodes = ' . $max_episodes . ';
         </script>
     ';
 }

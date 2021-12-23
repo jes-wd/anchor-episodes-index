@@ -32,7 +32,7 @@ If you want to add multiple different podcasts on the site, you can define the R
 
 Shortcode examples: 
 - [anchor_episodes] - Uses values set in the settings page
-- [anchor_episodes site_url="https://anchor.fm/your-podcast" rss_url="https://anchor.fm/s/123456-your-key/podcast/rss"] - Overrides values set on the settings page
+- [anchor_episodes site_url="https://anchor.fm/your-podcast" rss_url="https://anchor.fm/s/123456-your-key/podcast/rss" max_episode="10"] - Overrides values set on the settings page
 
 == Changelog ==
 
@@ -53,3 +53,6 @@ Shortcode examples:
 
 = 1.1.1 =
 * Added ability for shortcode attributes to be defined for the Site and RSS URL's, so that different podcast can be output on the site at one time. 
+
+= 1.1.2 =
+* Added option for user to define the maximum amount of episodes to display. Add arguments to enqueue scripts in footer.

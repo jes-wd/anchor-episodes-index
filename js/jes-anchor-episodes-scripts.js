@@ -15,6 +15,14 @@ feednami.load(rssUrl).then((feed) => {
 		'podcast-list-container'
 	);
 
+	const maxEpisodes = window.jesAnchorMaxEpisodes
+	console.log(maxEpisodes);
+
+	if (maxEpisodes < feed.entries.length) {
+		feed.entries = feed.entries.slice(0, maxEpisodes);
+	}
+	console.log(feed.entries.length);
+
 	// Loop through the JSON to produce the list
 	for (const entry of feed.entries) {
 		// add '/embed' to URL so that it works in an iframe

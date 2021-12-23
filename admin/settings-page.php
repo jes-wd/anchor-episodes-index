@@ -55,6 +55,13 @@ class JES_Anchor_Settings_Page {
 			'jes_anchor_settings',
 			'jes_anchor_settings_section'
 		);
+		add_settings_field(
+			'max_episodes',
+			__( 'Total Podcasts To Display', 'text_domain' ),
+			array( $this, 'render_max_episodes_field' ),
+			'jes_anchor_settings',
+			'jes_anchor_settings_section'
+		);
 
 	}
 
@@ -106,6 +113,20 @@ class JES_Anchor_Settings_Page {
 		// Field output.
 		echo '<input type="url" name="jes_anchor_settings[anchor_rss_url]" class="regular-text anchor_rss_url_field" placeholder="' . esc_attr__( '', 'text_domain' ) . '" value="' . esc_attr( $value ) . '">';
 		echo '<p class="description">' . __('Found in your Anchor settings. Looks like https://anchor.fm/s/{YOUR SITE KEY}/podcast/rss (make sure there is no "/" at the end)', 'text_domain' ) . '</p>';
+
+	}
+
+	function render_max_episodes_field() {
+
+		// Retrieve data from the database.
+		$options = get_option( 'jes_anchor_settings' );
+
+		// Set default value.
+		$value = isset( $options['max_episodes'] ) ? $options['max_episodes'] : '';
+
+		// Field output.
+		echo '<input type="number" name="jes_anchor_settings[max_episodes]" class="regular-text anchor_max_episodes_field" placeholder="' . esc_attr__( '', 'text_domain' ) . '" value="' . esc_attr( $value ) . '">';
+		echo '<p class="description">' . __('The amount of podcasts episodes you want to display. Default is 999.');
 
 	}
 
