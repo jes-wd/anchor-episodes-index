@@ -127,7 +127,6 @@ const setShowMoreEvents = () => {
 	const showMoreBtns = document.getElementsByClassName(
 		'podcast-description-show-more-btn'
 	);
-	console.log(showMoreBtns);
 	for (i = 0; i < showMoreBtns.length; i++) {
 		showMoreBtns[i].addEventListener('click', (e) => {
 			e = e || window.event;

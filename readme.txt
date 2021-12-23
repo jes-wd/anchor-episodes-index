@@ -4,7 +4,7 @@ Tags: anchor.fm, podcast, embed
 Requires at least: 4.8
 Tested up to: 5.8
 Requires PHP: 5.2
-Stable tag: 1.1.0
+Stable tag: 1.1.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -26,7 +26,13 @@ Firstly, install and activate Anchor Episodes Index (this plugin).
 
 Once activated, go to the settings and fill out the Anchor Site URL and Anchor RSS URL fields (be sure to add the URL's without a "/" at the end, otherwise it will not work).
 
-Then copy the shortcode you'll see on the settings page and paste it in any page or post. 
+Then copy the shortcode you'll see on the settings page and paste it in any page or post.
+
+If you want to add multiple different podcasts on the site, you can define the RSS and Site URL's as shortcode attributes instead of on the settings page. 
+
+Shortcode examples: 
+- [anchor_episodes] - Uses values set in the settings page
+- [anchor_episodes site_url="https://anchor.fm/your-podcast" rss_url="https://anchor.fm/s/123456-your-key/podcast/rss"] - Overrides values set on the settings page
 
 == Changelog ==
 
@@ -44,3 +50,6 @@ Then copy the shortcode you'll see on the settings page and paste it in any page
 
 = 1.1.0 =
 * Added loading animation and bg color when loading, added expand description function
+
+= 1.1.1 =
+* Added ability for shortcode attributes to be defined for the Site and RSS URL's, so that different podcast can be output on the site at one time. 

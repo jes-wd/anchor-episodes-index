@@ -3,7 +3,7 @@
 /**
  * Plugin Name: Anchor Episodes Index
  * Description: A lightweight plugin that allows you to output an anchor.fm podcast player on your site that includes an episode index. Just add two URL's on the settings page, grab the shortcode, and you're good to go!
- * Version: 1.1.0
+ * Version: 1.1.1
  * Author: JES Web Development
  * Author URI: https://jeswebdevelopment.com
  * License: GPLv2 or later
@@ -28,6 +28,11 @@ add_action('wp_enqueue_scripts', 'jes_anchor_episodes_register_scripts');
 
 // shortcode main function
 function jes_anchor_episodes_init($atts) {
+    $shortcode_attributes = shortcode_atts( array(
+		'site_url' => '',
+		'rss_url' => '',
+	), $atts );
+
 
     // enqueue scripts - this prevents them from enqeueing on irrelevant pages
     wp_enqueue_style('jes-anchor-episodes-styles');
@@ -36,8 +41,10 @@ function jes_anchor_episodes_init($atts) {
 
     // Retrieve settings page data from the database
     $options = get_option('jes_anchor_settings');
-    $site_url = isset($options['site_url']) ? $options['site_url'] : '';
-    $anchor_rss_url = isset($options['anchor_rss_url']) ? $options['anchor_rss_url'] : '';
+    $site_url_from_options = isset($options['site_url']) ? $options['site_url'] : '';
+    $anchor_rss_url_from_options = isset($options['anchor_rss_url']) ? $options['anchor_rss_url'] : '';
+    $site_url = strlen($shortcode_attributes['site_url']) > 0 ? $shortcode_attributes['site_url'] : $site_url_from_options;
+    $anchor_rss_url = strlen($shortcode_attributes['rss_url']) > 0 ? $shortcode_attributes['rss_url'] : $anchor_rss_url_from_options;
 
     // return html
     return '
