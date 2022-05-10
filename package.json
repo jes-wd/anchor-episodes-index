@@ -1,0 +1,35 @@
+{
+  "name": "anchor-episodes-index",
+  "version": "1.0.0",
+  "description": "This started off with an article I wrote [here](https://jeswebdevelopment.com/add-an-episode-index-to-the-anchor-podcasts-embed-player/) explaining how to make an episode index to the anchor.fm podcast player embed, as this is something that is lacking in the standard player.",
+  "main": "index.js",
+  "scripts": {
+    "start": "webpack --mode production",
+    "build": "webpack --mode production",
+    "dev": "webpack --mode development"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jes-wd/anchor-episodes-index.git"
+  },
+  "author": "JES Web Development",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jes-wd/anchor-episodes-index/issues"
+  },
+  "homepage": "https://github.com/jes-wd/anchor-episodes-index#readme",
+  "dependencies": {
+    "style-loader": "^3.3.1",
+    "xml-js": "^1.6.11",
+    "xml2json-light": "^1.0.6"
+  },
+  "devDependencies": {
+    "css-loader": "^6.7.1",
+    "mini-css-extract-plugin": "^2.6.0",
+    "node-sass": "^7.0.1",
+    "sass-loader": "^12.6.0",
+    "source-map-loader": "^3.0.1",
+    "webpack": "^5.72.0",
+    "webpack-cli": "^4.9.2"
+  }
+}
