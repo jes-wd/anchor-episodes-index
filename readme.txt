@@ -2,9 +2,9 @@
 Contributors: jeswd
 Tags: anchor.fm, podcast, embed
 Requires at least: 4.8
-Tested up to: 5.8
+Tested up to: 5.9
 Requires PHP: 5.2
-Stable tag: 1.1.2
+Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -32,7 +32,7 @@ If you want to add multiple different podcasts on the site, you can define the R
 
 Shortcode examples: 
 - [anchor_episodes] - Uses values set in the settings page
-- [anchor_episodes site_url="https://anchor.fm/your-podcast" rss_url="https://anchor.fm/s/123456-your-key/podcast/rss" max_episode="10"] - Overrides values set on the settings page
+- [anchor_episodes site_url="https://anchor.fm/your-podcast" rss_url="https://anchor.fm/s/123456-your-key/podcast/rss" max_episodes="10"] - Overrides values set on the settings page
 
 == Changelog ==
 
@@ -56,3 +56,6 @@ Shortcode examples:
 
 = 1.1.2 =
 * Added option for user to define the maximum amount of episodes to display. Add arguments to enqueue scripts in footer.
+
+= 1.2.0 =
+* Improved CSS structure so that themes conflict with the styles less. Refactored JS for better speed and readability. Removed feednami and now working with the XML directly. Improved naming throughout code.

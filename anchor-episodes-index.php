@@ -3,7 +3,7 @@
 /**
  * Plugin Name: Anchor Episodes Index
  * Description: A lightweight plugin that allows you to output an anchor.fm podcast player on your site that includes an episode index. Just add two URL's on the settings page, grab the shortcode, and you're good to go!
- * Version: 1.1.2
+ * Version: 1.2.0
  * Author: JES Web Development
  * Author URI: https://jeswebdevelopment.com
  * License: GPLv2 or later

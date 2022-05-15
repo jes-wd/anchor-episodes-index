@@ -1,7 +1,7 @@
 @import 'variables';
 @import 'animations';
 
-#podcasts-player-container {
+#jesaei-podcasts-player-container {
   line-height: 0px;
   border-radius: 20px;
   background-color: $background-color_1;
@@ -13,7 +13,7 @@
   .wpb_wrapper {
     line-height: 0;
   }
-  #anchor-podcast-iframe {
+  #jesaei-anchor-podcast-iframe {
     position: relative;
   }
   #podcast-list-container {
@@ -23,15 +23,16 @@
     border-radius: 50%;
     background-color: $background-color_2;
     color: $color_1;
-    padding: 3px;
+    padding: 4px 2px;
     display: inline-block;
-    height: 16px;
+    height: 17px;
+    width: 18px;
     position: relative;
     top: -3px;
-    width: 18px;
     line-height: 0px;
     cursor: pointer;
     font-size: 14px;
+    margin-left: 4px;
   }
   .styles__episodeFeed___3mOKz {
     position: relative;
@@ -87,6 +88,8 @@
       font-weight: 700;
       font-size: 15px;
       color: $color_2;
+      width: 81%;
+      line-height: 17px;
     }
     .styles__episodeDescription___C3oZg {
       color: $color_4;
@@ -203,22 +206,19 @@
         width: 56px;
         height: 56px;
         margin-right: 22px;
-        margin-bottom: 0;
+        margin-bottom: 5px;
       }
       .styles__episodeHeading___29q7v {
         font-weight: 700;
         font-size: 14px;
         color: $color_2;
         margin-bottom: 4px;
-        width: 365px;
       }
       .styles__episodeDescription___C3oZg {
         font-size: 13px;
         line-height: 18px;
         color: $color_6;
         clear: none;
-        width: 465px;
-        margin-left: 78px;
         font-size: 13px;
         line-height: 18px;
         color: $color_6;

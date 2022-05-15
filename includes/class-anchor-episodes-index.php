@@ -14,7 +14,6 @@ class Main {
     // register scripts but do not enqueue
     public function register_scripts() {
         wp_register_style('jesaei-styles', JESAEI_PLUGIN_URL . 'dist/main.css', array(), '1.0.0', 'all');
-        // wp_register_script('jesaei-feednami', JESAEI_PLUGIN_URL . 'src/js/feednami-client-v1.1.js', array(), '1.0.0', true);
         wp_register_script('jesaei-scripts', JESAEI_PLUGIN_URL . 'dist/jesaei.bundle.js', array(), '1.0.0', true);
     }
 
@@ -32,7 +31,6 @@ class Main {
 
         // enqueue scripts - this prevents them from enqeueing on irrelevant pages
         wp_enqueue_style('jesaei-styles');
-        // wp_enqueue_script('jesaei-feednami');
         wp_enqueue_script('jesaei-scripts');
 
         // Retrieve settings page data
@@ -41,20 +39,21 @@ class Main {
         $site_url = strlen($shortcode_attributes['site_url']) > 0 ? $shortcode_attributes['site_url'] : $site_url_from_options;
         $anchor_rss_url_from_options = isset($options['anchor_rss_url']) ? $options['anchor_rss_url'] : '';
         $anchor_rss_url = strlen($shortcode_attributes['rss_url']) > 0 ? $shortcode_attributes['rss_url'] : $anchor_rss_url_from_options;
-        $max_episodes_from_options = isset($options['max_episodes']) ? (int) $options['max_episodes'] : 999;
+        $max_episodes_from_options = !empty($options['max_episodes']) ? (int) $options['max_episodes'] : 999;
         $max_episodes = strlen($shortcode_attributes['max_episodes']) > 0 ? (int) $shortcode_attributes['max_episodes'] : $max_episodes_from_options;
 
+
         // return html
-        return '
-        <div id="podcasts-player-container">
+        return $options['max_episodes'] . '
+        <div id="jesaei-podcasts-player-container">
             <div id="podcast-player-loading-animation" class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
-            <iframe id="anchor-podcast-iframe" src="' . $site_url . '/embed" style="width: 100%;" frameborder="0" scrolling="no" name="iframe"></iframe>
-            <div id="podcast-list-container" class="styles__episodeFeed___3mOKz"></div>
+            <iframe id="jesaei-anchor-podcast-iframe" src="' . $site_url . '/embed" style="width: 100%;" frameborder="0" scrolling="no" name="jesaei_podcast_iframe"></iframe>
+            <div id="jesaei-podcast-list-container" class="jesaei-podcast-list-container styles__episodeFeed___3mOKz"></div>
         </div>
         <script>
-            window.jesAnchorEpisodesSiteUrl = "' . $site_url . '";
-            window.jesAnchorEpisodesRssUrl =  "' . $anchor_rss_url . '";
-            window.jesAnchorMaxEpisodes = ' . $max_episodes . ';
+            window.jesaeiSiteUrl = "' . $site_url . '";
+            window.jesaeiRssUrl =  "' . $anchor_rss_url . '";
+            window.jesaeiMaxEpisodes = ' . $max_episodes . ';
         </script>
     ';
     }
