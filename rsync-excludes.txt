@@ -1,0 +1,11 @@
+node_modules
+.gitignore
+.git
+src
+.gitignore
+readme.md
+rsync-excludes.txt
+webpack.config.js
+.DS_Store
+package-lock.json
+package.json

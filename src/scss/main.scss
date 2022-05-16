@@ -23,13 +23,14 @@
     border-radius: 50%;
     background-color: $background-color_2;
     color: $color_1;
-    padding: 4px 2px;
+    text-align: center;
     display: inline-block;
-    height: 17px;
+    vertical-align: middle;
+    line-height: 8px !important;
+    height: 18px;
     width: 18px;
     position: relative;
     top: -3px;
-    line-height: 0px;
     cursor: pointer;
     font-size: 14px;
     margin-left: 4px;
@@ -49,7 +50,7 @@
     display: block;
   }
   .styles__episodeFeedItem___1U6E2 {
-    min-height: 106px;
+    // min-height: 106px;
     color: $color_2;
     background: #fff;
     border-radius: 4px;

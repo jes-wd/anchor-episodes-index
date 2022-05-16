@@ -4,7 +4,7 @@ Tags: anchor.fm, podcast, embed
 Requires at least: 4.8
 Tested up to: 5.9
 Requires PHP: 5.2
-Stable tag: 1.2.0
+Stable tag: 1.2.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -57,5 +57,5 @@ Shortcode examples:
 = 1.1.2 =
 * Added option for user to define the maximum amount of episodes to display. Add arguments to enqueue scripts in footer.
 
-= 1.2.0 =
+= 1.2.1 =
 * Improved CSS structure so that themes conflict with the styles less. Refactored JS for better speed and readability. Removed feednami and now working with the XML directly. Improved naming throughout code.
