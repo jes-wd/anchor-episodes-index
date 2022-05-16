@@ -44,7 +44,7 @@ class Main {
 
 
         // return html
-        return $options['max_episodes'] . '
+        return '
         <div id="jesaei-podcasts-player-container">
             <div id="podcast-player-loading-animation" class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
             <iframe id="jesaei-anchor-podcast-iframe" src="' . $site_url . '/embed" style="width: 100%;" frameborder="0" scrolling="no" name="jesaei_podcast_iframe"></iframe>

@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
+  window.addEventListener('resize', setPlayerIframeHeight)
   setPlayerIframeHeight()
 
   const siteUrl = window.jesaeiSiteUrl
@@ -203,3 +204,4 @@ const setPlayerIframeHeight = () => {
     loadingAnimation.style.top = '10px'
   }
 }
+
