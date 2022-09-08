@@ -2,9 +2,9 @@
 Contributors: jeswd
 Tags: anchor.fm, podcast, embed
 Requires at least: 4.8
-Tested up to: 5.9
+Tested up to: 6.0
 Requires PHP: 5.2
-Stable tag: 1.2.1
+Stable tag: 1.2.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -28,11 +28,13 @@ Once activated, go to the settings and fill out the Anchor Site URL and Anchor R
 
 Then copy the shortcode you'll see on the settings page and paste it in any page or post.
 
-If you want to add multiple different podcasts on the site, you can define the RSS and Site URL's as shortcode attributes instead of on the settings page. 
+If you want to add multiple different podcasts on the site, you can define the RSS and Site URL's as shortcode attributes instead of on the settings page. Note, you cannot currently output two players on one page.
 
-Shortcode examples: 
-- [anchor_episodes] - Uses values set in the settings page
-- [anchor_episodes site_url="https://anchor.fm/your-podcast" rss_url="https://anchor.fm/s/123456-your-key/podcast/rss" max_episodes="10"] - Overrides values set on the settings page
+== Shortcode examples ==
+Uses values set in the settings page:
+`[anchor_episodes]`
+Overrides values set on the settings page:
+`[anchor_episodes site_url="https://anchor.fm/your-podcast" rss_url="https://anchor.fm/s/123456-your-key/podcast/rss" max_episodes="10"]`
 
 == Changelog ==
 
@@ -59,3 +61,6 @@ Shortcode examples:
 
 = 1.2.1 =
 * Improved CSS structure so that themes conflict with the styles less. Refactored JS for better speed and readability. Removed feednami and now working with the XML directly. Improved naming throughout code.
+
+= 1.2.2 =
+* Update readme. Tested for WP v6.

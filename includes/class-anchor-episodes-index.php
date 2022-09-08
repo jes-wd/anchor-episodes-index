@@ -45,17 +45,17 @@ class Main {
 
         // return html
         return '
-        <div id="jesaei-podcasts-player-container">
-            <div id="podcast-player-loading-animation" class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
-            <iframe id="jesaei-anchor-podcast-iframe" src="' . $site_url . '/embed" style="width: 100%;" frameborder="0" scrolling="no" name="jesaei_podcast_iframe"></iframe>
-            <div id="jesaei-podcast-list-container" class="jesaei-podcast-list-container styles__episodeFeed___3mOKz"></div>
-        </div>
-        <script>
-            window.jesaeiSiteUrl = "' . $site_url . '";
-            window.jesaeiRssUrl =  "' . $anchor_rss_url . '";
-            window.jesaeiMaxEpisodes = ' . $max_episodes . ';
-        </script>
-    ';
+            <div id="jesaei-podcasts-player-container">
+                <div id="podcast-player-loading-animation" class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
+                <iframe id="jesaei-anchor-podcast-iframe" src="' . $site_url . '/embed" style="width: 100%;" frameborder="0" scrolling="no" name="jesaei_podcast_iframe"></iframe>
+                <div id="jesaei-podcast-list-container" class="jesaei-podcast-list-container styles__episodeFeed___3mOKz"></div>
+            </div>
+            <script>
+                window.jesaeiSiteUrl = "' . $site_url . '";
+                window.jesaeiRssUrl =  "' . $anchor_rss_url . '";
+                window.jesaeiMaxEpisodes = ' . $max_episodes . ';
+            </script>
+        ';
     }
 
     // add settings link on plugin index page
