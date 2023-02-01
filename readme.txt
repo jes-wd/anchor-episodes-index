@@ -4,7 +4,7 @@ Tags: anchor.fm, podcast, embed
 Requires at least: 4.8
 Tested up to: 6.0
 Requires PHP: 5.2
-Stable tag: 1.2.3
+Stable tag: 1.2.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -64,3 +64,15 @@ Overrides values set on the settings page:
 
 = 1.2.2 =
 * Update readme. Tested for WP v6.
+
+= 1.2.3 =
+* Fix minor update bug
+
+= 1.2.4 =
+* RSS feed duration value changed from timestamp to HH:mm:ss. Removed conversion function and display as is.
+
+= 1.2.5 =
+* episode description now respects anchor.fm text formatting
+
+= 1.2.6 =
+* improved text formatting. added script localization to output PHP vars.

@@ -3,7 +3,7 @@
 /**
  * Plugin Name: Anchor Episodes Index
  * Description: A lightweight plugin that allows you to output an anchor.fm podcast player on your site that includes an episode index. Just add two URL's on the settings page, grab the shortcode, and you're good to go!
- * Version: 1.2.3
+ * Version: 1.2.6
  * Author: JES Web Development
  * Author URI: https://jeswebdevelopment.com
  * License: GPLv2 or later
@@ -17,6 +17,10 @@ if (!defined('ABSPATH')) {
 define('JESAEI_PLUGIN_PATH', plugin_dir_path(__FILE__));
 define('JESAEI_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('JESAEI_PLUGIN_BASENAME', plugin_basename(__FILE__));
+define('JESAEI_PLUGIN_VERSION', '0.0.1');
+define('JESAEI_IS_PRO_ACTIVE', class_exists('Anchor_Episodes_Index\Pro\Main'));
 
-include(JESAEI_PLUGIN_PATH . 'includes/class-anchor-episodes-index.php');
+include(JESAEI_PLUGIN_PATH . 'includes/rss-data-formatting.php');
+include(JESAEI_PLUGIN_PATH . 'includes/functions.php');
+include(JESAEI_PLUGIN_PATH . 'includes/main.php');
 include(JESAEI_PLUGIN_PATH . 'includes/admin-settings-page.php');

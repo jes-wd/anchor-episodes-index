@@ -7,14 +7,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 class JES_Anchor_Settings_Page {
 
 	public function __construct() {
-
 		add_action( 'admin_menu', array( $this, 'add_admin_menu' ) );
 		add_action( 'admin_init', array( $this, 'init_settings'  ) );
-
 	}
 
 	public function add_admin_menu() {
-
 		add_menu_page(
 			esc_html__( 'Anchor Episodes', 'text_domain' ),
 			esc_html__( 'Anchor Episodes', 'text_domain' ),
@@ -24,23 +21,19 @@ class JES_Anchor_Settings_Page {
 			'dashicons-microphone',
 			99
 		);
-
 	}
 
 	public function init_settings() {
-
 		register_setting(
 			'jes_anchor_settings',
 			'jes_anchor_settings'
 		);
-
 		add_settings_section(
 			'jes_anchor_settings_section',
 			'',
 			false,
 			'jes_anchor_settings'
 		);
-
 		add_settings_field(
 			'site_url',
 			__( 'Anchor Site URL', 'text_domain' ),
@@ -62,11 +55,9 @@ class JES_Anchor_Settings_Page {
 			'jes_anchor_settings',
 			'jes_anchor_settings_section'
 		);
-
 	}
 
 	public function page_layout() {
-
 		// Check required user capability
 		if ( !current_user_can( 'manage_options' ) )  {
 			wp_die( esc_html__( 'You do not have sufficient permissions to access this page.', 'text_domain' ) );
@@ -74,10 +65,10 @@ class JES_Anchor_Settings_Page {
 
 		// Admin Page Layout
 		echo '<div class="wrap">';
-		echo '	<h1>' . get_admin_page_title() . '</h1>';
+		echo '<h1>' . get_admin_page_title() . '</h1>';
         echo '<h3>Output the player on any page with the below shortcode:</br></br>';
         echo '<span style="background-color: #cecece; padding: 8px;">[anchor_episodes]</span></h3>';
-		echo '	<form action="options.php" method="post">';
+		echo '<form action="options.php" method="post">';
 
 		settings_fields( 'jes_anchor_settings' );
 		do_settings_sections( 'jes_anchor_settings' );
@@ -85,10 +76,9 @@ class JES_Anchor_Settings_Page {
 
 		echo '</form>';
 		echo '</div>';
-
 	}
 
-	function render_site_url_field() {
+	public function render_site_url_field() {
 
 		// Retrieve data from the database.
 		$options = get_option( 'jes_anchor_settings' );
@@ -102,7 +92,7 @@ class JES_Anchor_Settings_Page {
 
 	}
 
-	function render_anchor_rss_url_field() {
+	public function render_anchor_rss_url_field() {
 
 		// Retrieve data from the database.
 		$options = get_option( 'jes_anchor_settings' );
@@ -116,7 +106,7 @@ class JES_Anchor_Settings_Page {
 
 	}
 
-	function render_max_episodes_field() {
+	public function render_max_episodes_field() {
 
 		// Retrieve data from the database.
 		$options = get_option( 'jes_anchor_settings' );
