@@ -14,10 +14,10 @@ class Functions {
   public function get_rss_feed() {
     $rss_url = isset($this->options['anchor_rss_url']) ? $this->options['anchor_rss_url'] : '';
 
-    // delete_transient('jesaei_rss_feed');
+    // delete_transient('jesaei_episodes');
 
     // if not stored in transient, fetch rss feed
-    if (false === ($feed_array = get_transient('jesaei_rss_feed'))) {
+    if (false === ($feed_array = get_transient('jesaei_episodes'))) {
 
       $feed_content = file_get_contents($rss_url);
       $feed_xml = simplexml_load_string($feed_content);
@@ -40,16 +40,18 @@ class Functions {
           "summary" => (string) $itunes_data->summary,
           "duration" => (string) $itunes_data->duration,
           "keywords" => (string) $itunes_data->keywords,
+          "site_url" => (string) $item->link,
+          "author" => (string) $feed_xml->channel->image->title
         );
       }
 
       // echo pre
-      echo '<pre>';
-      print_r($feed_array);
-      echo '</pre>';
+      // echo '<pre>';
+      // print_r($feed_xml);
+      // echo '</pre>';
 
       // save feed array in transient with 15 minute expiration
-      set_transient('jesaei_rss_feed', $feed_array, 15 * MINUTE_IN_SECONDS);
+      set_transient('jesaei_episodes', $feed_array, 15 * MINUTE_IN_SECONDS);
     }
 
     return $feed_array;
@@ -58,19 +60,34 @@ class Functions {
   public function get_episode_list_html() {
     $episodes = $this->get_rss_feed();
     $html = '<div id="jesaei-podcast-list-container" class="jesaei-podcast-list-container styles__episodeFeed___3mOKz">';
+    $index = 0;
 
     foreach ($episodes as $episode) {
-      $link_attributes = JESAEI_IS_PRO_ACTIVE ? 'data-audio-url="' . $episode['audio_url'] . '"' : 'href="' . $episode['iframe_url'] . '" target="jesaei_podcast_iframe"';
+      $link_attributes = '';
+
+      if (JESAEI_IS_PRO_ACTIVE) {
+        $link_attributes .= 'data-audio-url="' . $episode['audio_url'] . '"';
+        $link_attributes .= 'data-episode-title="' . $episode['title'] . '"';
+        $link_attributes .= 'data-episode-image="' . $episode['image_url'] . '"';
+        $link_attributes .= 'data-episode-published-date="' . $episode['published_date'] . '"';
+        $link_attributes .= 'data-episode-duration="' . $episode['duration'] . '"';
+        $link_attributes .= 'data-episode-author="' . $episode['author'] . '"';
+        $link_attributes .= 'data-episode-site-url="' . $episode['site_url'] . '"';
+      } else {
+        $link_attributes .= 'href="' . $episode['iframe_url'] . '" target="jesaei_podcast_iframe"';
+      }
 
       $html .= '
-        <div class="styles__episodeFeedItem___1U6E2">
-          <a class="podcast-list-link styles__episodeImage___tMifW" ' . $link_attributes . '">
+        <div class="styles__episodeFeedItem___1U6E2 ' . ($index === 0 ? 'jesaeip-selected-episode' : '') . '">
+          <span class="styles__isActiveEpisode___cXlB4"></span>
+          <a class="jesaeip-episode-play-btn podcast-list-link styles__episodeImage___tMifW" ' . $link_attributes . '>
             <img src="' . $episode['image_url'] . '">
             <button class="styles__circle___1g-9u styles__white___372tQ styles__playButton___1Ivi4 styles__playButton___1uaGA" aria-label="" style="height: 31px; min-height: 31px; width: 31px; min-width: 31px; border-radius: 16px;">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="-1 0 11 12" width="13" height="13">
+              <svg class="jesaeip-episode-play-icon" xmlns="http://www.w3.org/2000/svg" viewBox="-1 0 11 12" width="13" height="13">
                 <rect width="12" height="12" fill="none"></rect>
                 <path d="M1 .81v10.38a.76.76 0 0 0 .75.75.67.67 0 0 0 .39-.12l8.42-5.18a.75.75 0 0 0 0-1.28L2.14.18a.75.75 0 0 0-1 .24.79.79 0 0 0-.14.39z" fill="#282F36"></path>
               </svg>
+              <svg class="jesaeip-episode-pause-icon" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg" width="13" height="13" aria-label="pause icon"><rect x=".03" width="12" height="12" fill="none"></rect><path d="M8.45 0h1.83a.75.75 0 0 1 .72.75v10.5a.75.75 0 0 1-.75.75h-1.8a.75.75 0 0 1-.75-.75V.75A.75.75 0 0 1 8.45 0zM1.78 0h1.83a.75.75 0 0 1 .75.75v10.5a.75.75 0 0 1-.75.75H1.78a.76.76 0 0 1-.78-.75V.75A.76.76 0 0 1 1.78 0z" fill="#282F36"></path></svg>
             </button>
           </a>
           <a class="podcast-list-link" href="' . $episode['episode_iframe_url'] . '" target="jesaei_podcast_iframe" data-audio-url="' . $episode['audio_url'] . '">
@@ -91,6 +108,8 @@ class Functions {
           <div class="styles__episodeCreated___1zP5p">' . $episode['published_date'] . '</div>
         </div>
       ';
+
+      $index++;
     }
 
     $html .= '</div>';

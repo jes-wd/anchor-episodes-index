@@ -55,6 +55,16 @@ class JES_Anchor_Settings_Page {
 			'jes_anchor_settings',
 			'jes_anchor_settings_section'
 		);
+		// if pro is active add this field
+		if (JESAEI_IS_PRO_ACTIVE) {
+			add_settings_field(
+				'dark_theme',
+				__( 'Dark theme', 'text_domain' ),
+				array( $this, 'render_dark_theme_field' ),
+				'jes_anchor_settings',
+				'jes_anchor_settings_section'
+			);
+		}
 	}
 
 	public function page_layout() {
@@ -89,6 +99,21 @@ class JES_Anchor_Settings_Page {
 		// Field output.
 		echo '<input type="url" name="jes_anchor_settings[site_url]" class="regular-text site_url_field" placeholder="' . esc_attr__( '', 'text_domain' ) . '" value="' . esc_attr( $value ) . '">';
 		echo '<p class="description">' . __( 'Looks like https://anchor.fm/{YOUR SITE NAME} (make sure there is no "/" at the end)', 'text_domain' ) . '</p>';
+
+	}
+
+	// render dark theme field, checkbox
+	public function render_dark_theme_field() {
+
+		// Retrieve data from the database.
+		$options = get_option( 'jes_anchor_settings' );
+
+		// Set default value.
+		$value = isset( $options['dark_theme'] ) ? $options['dark_theme'] : '';
+
+		// Field output.
+		echo '<input type="checkbox" name="jes_anchor_settings[dark_theme]" class="regular-text dark_theme_field" value="1" ' . checked( 1, $value, false ) . '>';
+		// echo '<p class="description">' . __( 'Check to use dark theme', 'text_domain' ) . '</p>';
 
 	}
 

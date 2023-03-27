@@ -4,7 +4,7 @@ Tags: anchor.fm, podcast, embed
 Requires at least: 4.8
 Tested up to: 6.0
 Requires PHP: 5.2
-Stable tag: 1.2.6
+Stable tag: 2.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -74,5 +74,5 @@ Overrides values set on the settings page:
 = 1.2.5 =
 * episode description now respects anchor.fm text formatting
 
-= 1.2.6 =
+= 2.0.0 =
 * improved text formatting. added script localization to output PHP vars.

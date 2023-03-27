@@ -1,13 +1,13 @@
 {
   "name": "anchor-episodes-index-pro",
-  "version": "1.2.6",
+  "version": "2.0.0",
   "description": "This started off with an article I wrote [here](https://jeswebdevelopment.com/add-an-episode-index-to-the-anchor-podcasts-embed-player/) explaining how to make an episode index to the anchor.fm podcast player embed, as this is something that is lacking in the standard player.",
   "main": "index.js",
   "scripts": {
     "start": "webpack --mode production",
     "build": "webpack --mode production",
     "dev": "webpack --mode development",
-    "build-svn": "rsync -av --progress ./ ~/dev/svn/anchor-episodes-index/trunk --exclude-from='rsync-excludes.txt' && rsync -av --progress ./ ~/dev/svn/anchor-episodes-index/tags/1.2.6 --exclude-from='rsync-excludes.txt'"
+    "build-svn": "rsync -av --progress ./ ~/dev/svn/anchor-episodes-index/trunk --exclude-from='rsync-excludes.txt' && rsync -av --progress ./ ~/dev/svn/anchor-episodes-index/tags/2.0.0 --exclude-from='rsync-excludes.txt'"
   },
   "repository": {
     "type": "git",
