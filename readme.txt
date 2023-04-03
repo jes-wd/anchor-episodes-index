@@ -2,13 +2,17 @@
 Contributors: jeswd
 Tags: anchor.fm, podcast, embed
 Requires at least: 4.8
-Tested up to: 6.0
+Tested up to: 6.2
 Requires PHP: 5.2
-Stable tag: 2.0.0
+Stable tag: 2.0.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 A lightweight plugin that allows you to output an anchor.fm podcast player on your site that includes an episode index. Just add two URL's on the settings page, grab the shortcode, and you're good to go!
+
+== Announcement ==
+
+There has been a recent change to the Anchor.fm RSS feed. If you are experiencing issues with the player, please update this plugin to its latest version.
 
 == Description ==
 
@@ -76,3 +80,6 @@ Overrides values set on the settings page:
 
 = 2.0.0 =
 * improved text formatting. added script localization to output PHP vars.
+
+= 2.0.1 =
+* Fixed episode title link being old iframe url

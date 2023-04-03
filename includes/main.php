@@ -25,9 +25,9 @@ class Main {
 
     // register scripts but do not enqueue
     public function register_scripts() {
-        wp_register_style('jesaei-styles', JESAEI_PLUGIN_URL . 'dist/main.css', array(), JESAEI_PLUGIN_VERSION, 'all');
-        wp_register_script('jesaei-scripts', JESAEI_PLUGIN_URL . 'dist/jesaei.bundle.js', array(), JESAEI_PLUGIN_VERSION, true);
-        wp_register_script('jesaei-localized', JESAEI_PLUGIN_URL . 'dist/localized.js');
+        wp_register_style('jesaei-styles', JESAEI_PLUGIN_URL . 'dist/main.css', array(), filemtime(JESAEI_PLUGIN_PATH . 'dist/main.css'), 'all');
+        wp_register_script('jesaei-scripts', JESAEI_PLUGIN_URL . 'dist/jesaei.bundle.js', array(), filemtime(JESAEI_PLUGIN_PATH . 'dist/jesaei.bundle.js'), true);
+        wp_register_script('jesaei-localized', JESAEI_PLUGIN_URL . 'dist/localized.js', array(), filemtime(JESAEI_PLUGIN_PATH . 'dist/localized.js'), true);
     }
 
     public function register_shortcode() {
