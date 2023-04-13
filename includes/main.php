@@ -21,6 +21,7 @@ class Main {
         add_action('init', [$this, 'register_shortcode']);
         add_filter('plugin_action_links_' . JESAEI_PLUGIN_BASENAME, [$this, 'add_plugin_settings_link']);
         add_action('updated_option', [$this, 'settings_updated_callback'], 10, 3);
+        add_action('upgrader_post_install', [$this, 'plugin_updated'], 10, 1);
     }
 
     // register scripts but do not enqueue
@@ -91,8 +92,15 @@ class Main {
         return $links;
     }
 
-    function settings_updated_callback($option_name, $old_value, $new_value) {
+    public function settings_updated_callback($option_name, $old_value, $new_value) {
         if ($option_name === 'jes_anchor_settings') {
+            delete_transient('jesaei_episodes');
+        }
+    }
+
+    public function plugin_updated($plugin) {
+        if ($plugin == 'anchor-episodes-index/anchor-episodes-index.php') {
+            // delete transient to force new API call
             delete_transient('jesaei_episodes');
         }
     }
