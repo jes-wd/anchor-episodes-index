@@ -4,7 +4,7 @@ Tags: anchor.fm, podcast, embed
 Requires at least: 4.8
 Tested up to: 6.2
 Requires PHP: 5.2
-Stable tag: 2.0.1
+Stable tag: 2.0.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -83,3 +83,6 @@ Overrides values set on the settings page:
 
 = 2.0.1 =
 * Fixed episode title link being old iframe url
+
+= 2.0.2 =
+* Switched from using file_get_contents to curl for getting RSS feed due to reports of some servers denying requests. Error was: file_get_contents(): https:// wrapper is disabled in the server configuration by allow_url_fopen=0

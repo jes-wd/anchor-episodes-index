@@ -14,12 +14,14 @@ class Functions {
   public function get_rss_feed() {
     $rss_url = isset($this->options['anchor_rss_url']) ? $this->options['anchor_rss_url'] : '';
 
-    // delete_transient('jesaei_episodes');
-
     // if not stored in transient, fetch rss feed
     if (false === ($feed_array = get_transient('jesaei_episodes'))) {
 
-      $feed_content = file_get_contents($rss_url);
+      $ch = curl_init($rss_url);
+      curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+      $feed_content = curl_exec($ch);
+      curl_close($ch);
+
       $feed_xml = simplexml_load_string($feed_content);
       $feed_array = array();
 
@@ -56,6 +58,7 @@ class Functions {
 
     return $feed_array;
   }
+
 
   public function get_episode_list_html() {
     $episodes = $this->get_rss_feed();

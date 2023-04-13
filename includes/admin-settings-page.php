@@ -12,14 +12,23 @@ class JES_Anchor_Settings_Page {
 	}
 
 	public function add_admin_menu() {
-		add_menu_page(
+		// add_menu_page(
+		// 	esc_html__( 'Anchor Episodes', 'text_domain' ),
+		// 	esc_html__( 'Anchor Episodes', 'text_domain' ),
+		// 	'manage_options',
+		// 	'jes-anchor-settings',
+		// 	array( $this, 'page_layout' ),
+		// 	'dashicons-microphone',
+		// 	99
+		// );
+		// switch to a wordpress settings submenu page
+		add_submenu_page(
+			'options-general.php',
 			esc_html__( 'Anchor Episodes', 'text_domain' ),
 			esc_html__( 'Anchor Episodes', 'text_domain' ),
 			'manage_options',
 			'jes-anchor-settings',
-			array( $this, 'page_layout' ),
-			'dashicons-microphone',
-			99
+			array( $this, 'page_layout' )
 		);
 	}
 
@@ -55,16 +64,6 @@ class JES_Anchor_Settings_Page {
 			'jes_anchor_settings',
 			'jes_anchor_settings_section'
 		);
-		// if pro is active add this field
-		if (JESAEI_IS_PRO_ACTIVE) {
-			add_settings_field(
-				'dark_theme',
-				__( 'Dark theme', 'text_domain' ),
-				array( $this, 'render_dark_theme_field' ),
-				'jes_anchor_settings',
-				'jes_anchor_settings_section'
-			);
-		}
 	}
 
 	public function page_layout() {
@@ -86,6 +85,11 @@ class JES_Anchor_Settings_Page {
 
 		echo '</form>';
 		echo '</div>';
+
+		// if pro is active add this field
+		if (JESAEI_IS_PRO_ACTIVE) {
+			do_action('jesaeip_license_form');
+		}
 	}
 
 	public function render_site_url_field() {
