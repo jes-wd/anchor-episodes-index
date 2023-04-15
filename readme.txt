@@ -1,18 +1,19 @@
-=== Anchor Episodes Index ===
+=== Anchor Episodes Index (Spotify for Podcasters) ===
 Contributors: jeswd
 Tags: anchor.fm, podcast, embed
 Requires at least: 4.8
 Tested up to: 6.2
 Requires PHP: 5.2
-Stable tag: 2.0.2
+Stable tag: 2.0.21
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 A lightweight plugin that allows you to output an anchor.fm podcast player on your site that includes an episode index. Just add two URL's on the settings page, grab the shortcode, and you're good to go!
 
-== Announcement ==
+== Announcements ==
 
-There has been a recent change to the Anchor.fm RSS feed. If you are experiencing issues with the player, please update this plugin to its latest version.
+* Anchor Episodes Index Pro is coming soon! [Learn more here](https://jesweb.dev)
+* There has been a recent change to the Anchor.fm RSS feed. If you are experiencing issues with the player, please update this plugin to the latest version.
 
 == Description ==
 
