@@ -37,10 +37,11 @@ class RSS_Data_Formatting {
 
     public function get_description_excerpt($description) {
         $description_no_html = strip_tags($description);
+        $description_sanitized = $this->sanitize_description($description);
         $description_max_length = 114;
         $description_excerpt = substr($description_no_html, 0, $description_max_length);
         $has_description_excerpt = strlen($description) > $description_max_length ? true : false;
-        $description_excerpt_html = $has_description_excerpt ? '<span class="podcast-description-show-more-btn" data-full-description="' . $description . '">...</span>' : '';
+        $description_excerpt_html = $has_description_excerpt ? '<span class="podcast-description-show-more-btn" data-full-description="' . $description_sanitized . '">...</span>' : '';
 
         return $description_excerpt . $description_excerpt_html;
     }
@@ -68,4 +69,24 @@ class RSS_Data_Formatting {
 
         return $month . ' ' . $day . ', ' . $year;
     }
+
+    public function sanitize_description($description) {
+        // Remove all tags except for <a>, <p>, <br>, <strong>, <em>, <ul>, <ol>, <li>
+        $allowed_tags = '<a><p><br><strong><em><ul><ol><li>';
+        $sanitized_description = strip_tags($description, $allowed_tags);
+    
+        // Only allow the href attribute on <a> tags
+        $sanitized_description = preg_replace_callback('/<a\s[^>]*>/', function ($matches) {
+            if (preg_match('/\s?href\s*=\s*[\'"]([^\'"]+)[\'"]/i', $matches[0], $href)) {
+                return sprintf('<a href="%s">', htmlspecialchars($href[1], ENT_QUOTES, 'UTF-8'));
+            } else {
+                return '<a>';
+            }
+        }, $sanitized_description);
+    
+        // Escape any special characters for use in HTML data attributes
+        $sanitized_description = htmlentities($sanitized_description, ENT_QUOTES, 'UTF-8');
+    
+        return $sanitized_description;
+    }    
 }

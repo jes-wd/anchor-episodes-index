@@ -14,6 +14,9 @@ class Functions {
   public function get_rss_feed() {
     $rss_url = isset($this->options['anchor_rss_url']) ? $this->options['anchor_rss_url'] : '';
 
+    // delete transient
+    delete_transient('jesaei_episodes');
+
     // if not stored in transient, fetch rss feed
     if (false === ($feed_array = get_transient('jesaei_episodes'))) {
 
@@ -32,7 +35,7 @@ class Functions {
           "title_excerpt" => (string) $this->RSS_Data_Formatting->get_title_excerpt($item->title),
           "iframe_url" => (string) $this->RSS_Data_Formatting->get_iframe_url($item->link),
           "audio_url" => (string) $item->enclosure->attributes()->url,
-          "description" => (string) $item->description,
+          "description" => (string) $this->RSS_Data_Formatting->sanitize_description($item->description),
           "description_excerpt" => (string) $this->RSS_Data_Formatting->get_description_excerpt($item->description),
           "published_date" => (string) $this->RSS_Data_Formatting->get_published_date($item->pubDate),
           "guid" => (string) $item->guid,
