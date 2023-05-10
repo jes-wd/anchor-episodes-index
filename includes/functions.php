@@ -84,8 +84,7 @@ class Functions {
       }
 
       $html .= '
-        <div class="styles__episodeFeedItem___1U6E2 ' . ($index === 0 ? 'jesaeip-selected-episode' : '') . '">
-          <span class="styles__isActiveEpisode___cXlB4"></span>
+        <div class="styles__episodeFeedItem___1U6E2 ' . (JESAEI_IS_PRO_ACTIVE ? ($index === 0 ? 'jesaeip-selected-episode' : '') : '') . '">
           <a class="jesaeip-episode-play-btn podcast-list-link styles__episodeImage___tMifW" ' . $link_attributes . '>
             <img src="' . $episode['image_url'] . '">
             <button class="styles__circle___1g-9u styles__white___372tQ styles__playButton___1Ivi4 styles__playButton___1uaGA" aria-label="" style="height: 31px; min-height: 31px; width: 31px; min-width: 31px; border-radius: 16px;">
