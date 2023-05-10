@@ -15,7 +15,7 @@ class Functions {
     $rss_url = isset($this->options['anchor_rss_url']) ? $this->options['anchor_rss_url'] : '';
 
     // delete transient
-    delete_transient('jesaei_episodes');
+    // delete_transient('jesaei_episodes');
 
     // if not stored in transient, fetch rss feed
     if (false === ($feed_array = get_transient('jesaei_episodes'))) {

@@ -85,7 +85,7 @@ class Main {
 
     // add settings link on plugin index page
     public function add_plugin_settings_link($links) {
-        $settings_link = '<a href="admin.php?page=jes-anchor-settings">Settings</a>';
+        $settings_link = '<a href="options-general.php?page=jes_anchor_settings">Settings</a>';
 
         array_unshift($links, $settings_link);
 
