@@ -69,12 +69,13 @@ class Functions {
     $index = 0;
 
     foreach ($episodes as $episode) {
+      $image_url = apply_filters('jesaei_modify_episode_image_url', $episode['image_url']);
       $link_attributes = '';
 
       if (JESAEI_IS_PRO_ACTIVE) {
         $link_attributes .= 'data-audio-url="' . $episode['audio_url'] . '"';
         $link_attributes .= 'data-episode-title="' . $episode['title'] . '"';
-        $link_attributes .= 'data-episode-image="' . $episode['image_url'] . '"';
+        $link_attributes .= 'data-episode-image="' . $image_url . '"';
         $link_attributes .= 'data-episode-published-date="' . $episode['published_date'] . '"';
         $link_attributes .= 'data-episode-duration="' . $episode['duration'] . '"';
         $link_attributes .= 'data-episode-author="' . $episode['author'] . '"';
@@ -85,8 +86,9 @@ class Functions {
 
       $html .= '
         <div class="styles__episodeFeedItem___1U6E2 ' . (JESAEI_IS_PRO_ACTIVE ? ($index === 0 ? 'jesaeip-selected-episode' : '') : '') . '">
+          <span class="styles__isActiveEpisode___cXlB4"></span>  
           <a class="jesaeip-episode-play-btn podcast-list-link styles__episodeImage___tMifW" ' . $link_attributes . '>
-            <img src="' . $episode['image_url'] . '">
+            <img src="' . $image_url . '">
             <button class="styles__circle___1g-9u styles__white___372tQ styles__playButton___1Ivi4 styles__playButton___1uaGA" aria-label="" style="height: 31px; min-height: 31px; width: 31px; min-width: 31px; border-radius: 16px;">
               <svg class="jesaeip-episode-play-icon" xmlns="http://www.w3.org/2000/svg" viewBox="-1 0 11 12" width="13" height="13">
                 <rect width="12" height="12" fill="none"></rect>

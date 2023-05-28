@@ -51,7 +51,7 @@ class Main {
         $anchor_rss_url = strlen($shortcode_attributes['rss_url']) > 0 ? $shortcode_attributes['rss_url'] : $anchor_rss_url_from_options;
         $max_episodes_from_options = !empty($options['max_episodes']) ? (int) $options['max_episodes'] : 999;
         $max_episodes = strlen($shortcode_attributes['max_episodes']) > 0 ? (int) $shortcode_attributes['max_episodes'] : $max_episodes_from_options;
-        $dark_theme = isset($options['dark_theme']) ? $options['dark_theme'] : false;
+        $dark_mode = isset($options['dark_mode']) ? $options['dark_mode'] : false;
 
         // output PHP vars as JS vars
         wp_localize_script('jesaei-localized', 'jesaei_settings', [
@@ -69,7 +69,7 @@ class Main {
             $this->Pro_Main->enqueue_scripts();
         }
 
-        $html = '<div id="jesaei-player-container" class="pro-active-' . (JESAEI_IS_PRO_ACTIVE ? 'yes' : 'no') . ' ' . ($dark_theme ? 'jesaeip-dark-theme' : '') . '">';
+        $html = '<div id="jesaei-player-container" class="pro-active-' . (JESAEI_IS_PRO_ACTIVE ? 'yes' : 'no') . ' ' . ($dark_mode ? 'jesaeip-dark-theme' : '') . '">';
         $html .= '<div id="jesaei-player-loading-animation" class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>';
 
         if (JESAEI_IS_PRO_ACTIVE) {
