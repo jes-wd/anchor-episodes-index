@@ -4,7 +4,7 @@ Tags: anchor.fm, podcast, embed
 Requires at least: 4.8
 Tested up to: 6.2
 Requires PHP: 5.2
-Stable tag: 2.0.31
+Stable tag: 2.0.40
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,8 +12,9 @@ A lightweight plugin that allows you to output an anchor.fm podcast player on yo
 
 == Announcements ==
 
-* Anchor Episodes Index Pro is coming soon! [Learn more here](https://jesweb.dev)
+* Anchor Episodes Index Pro is available now! [Learn more here](https://jesweb.dev)
 * There has been a recent change to the Anchor.fm RSS feed. If you are experiencing issues with the player, please update this plugin to the latest version.
+* There have been reports of a Google recaptcha element appearing over the player. This is caused by Anchor/Spotify in their embed. I have been in contact with them and they do not see this as an issue, so they don't seem to be willing to remove it. Upgrading to the Pro version will resolve this, as the embed is no longer used, and the player runs on your own site. 
 
 == Description ==
 
@@ -23,7 +24,7 @@ Simply input your site and RSS URL's on the settings page and add the shortcode 
 
 You can see more information on the problem this solves [in this article](https://jeswebdevelopment.com/add-an-episode-index-to-the-anchor-podcasts-embed-player/)
 
-Email me [here](mailto:jesse@jeswebdevelopment.com) for suggestions and feedback.
+Email me [here](mailto:jesse@jesweb.dev) for suggestions and feedback.
 
 == Usage ==
 
@@ -93,3 +94,9 @@ Overrides values set on the settings page:
 
 = 2.0.31 =
 * fix broken plugin settings link
+
+= 2.0.40 =
+* Enhanced integration with Pro version
+
+= 2.0.50 =
+* Pro version release. Added links and notices to alert users. 

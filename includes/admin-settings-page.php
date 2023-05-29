@@ -59,7 +59,7 @@ class JES_Anchor_Settings_Page {
 		);
 		add_settings_field(
 			'max_episodes',
-			__('Total Podcasts To Display', 'text_domain'),
+			__('Total Episodes To Display', 'text_domain'),
 			array($this, 'render_max_episodes_field'),
 			'jes_anchor_settings',
 			'jes_anchor_settings_section'
@@ -72,6 +72,14 @@ class JES_Anchor_Settings_Page {
 		// Check required user capability
 		if (!current_user_can('manage_options')) {
 			wp_die(esc_html__('You do not have sufficient permissions to access this page.', 'text_domain'));
+		}
+
+		// if pro is not active, add a notice at the top of the page to upgrade
+		if (!JESAEI_IS_PRO_ACTIVE) {
+			echo '<div class="notice notice-warning">';
+			echo '<p><strong>Upgrade to Anchor Episodes Index Pro for significant enhancements and more features!</strong></p>';
+			echo '<p><a href="https://jesweb.dev/" target="_blank">View Pro Features</a></p>';
+			echo '</div>';
 		}
 
 		// Admin Page Layout

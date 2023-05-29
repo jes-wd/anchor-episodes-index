@@ -63,12 +63,16 @@ class Functions {
   }
 
 
-  public function get_episode_list_html() {
+  public function get_episode_list_html(int $limit) {
     $episodes = $this->get_rss_feed();
     $html = '<div id="jesaei-podcast-list-container" class="jesaei-podcast-list-container styles__episodeFeed___3mOKz">';
     $index = 0;
 
     foreach ($episodes as $episode) {
+      if ($index >= $limit) {
+        break;
+      }
+
       $image_url = apply_filters('jesaei_modify_episode_image_url', $episode['image_url']);
       $link_attributes = '';
 

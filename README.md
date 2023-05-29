@@ -6,7 +6,7 @@ This started off with an article I wrote [here](https://jeswebdevelopment.com/ad
 
 Due to the popularity of that article, I made an embed maker, which you can see [here](https://anchor-embed.jeswebdevelopment.com/) and a WordPress plugin, which is the repository you are looking at now. 
 
-Email me [here](mailto:jesse@jeswebdevelopment.com) for suggestions and feedback.
+Email me [here](mailto:jesse@jesweb.dev) for suggestions and feedback.
 
 ## Usage
 

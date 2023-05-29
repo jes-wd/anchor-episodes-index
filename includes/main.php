@@ -17,11 +17,20 @@ class Main {
         }
 
         add_action('wp_enqueue_scripts', [$this, 'register_scripts']);
+        // enqueue admin css
+        add_action('admin_enqueue_scripts', [$this, 'enqueue_admin_scripts']);
         add_shortcode('anchor_episodes', [$this, 'init']);
         add_action('init', [$this, 'register_shortcode']);
         add_filter('plugin_action_links_' . JESAEI_PLUGIN_BASENAME, [$this, 'add_plugin_settings_link']);
+        add_filter('plugin_action_links_' . JESAEI_PLUGIN_BASENAME, [$this, 'add_plugin_pro_link']);
         add_action('updated_option', [$this, 'settings_updated_callback'], 10, 3);
         add_action('upgrader_post_install', [$this, 'plugin_updated'], 10, 1);
+        add_action('admin_notices', [$this, 'admin_notice_pro_version']);
+        add_action('wp_ajax_jesaei_dismiss_notice', [$this, 'dismiss_notice']);
+    }
+
+    public function enqueue_admin_scripts() {
+        wp_enqueue_style('jesaei-admin-styles', JESAEI_PLUGIN_URL . 'assets/admin.css', array(), filemtime(JESAEI_PLUGIN_PATH . 'dist/admin.css'), 'all');
     }
 
     // register scripts but do not enqueue
@@ -78,9 +87,21 @@ class Main {
             $html .= '<iframe id="jesaei-anchor-podcast-iframe" src="' . $site_url . '/embed" style="width: 100%;" frameborder="0" scrolling="no" name="jesaei_podcast_iframe"></iframe>';
         }
 
-        $html .= $this->Functions->get_episode_list_html();
+        $html .= $this->Functions->get_episode_list_html((int) $max_episodes);
 
         return $html;
+    }
+
+    public function add_plugin_pro_link($links) {
+        if (JESAEI_IS_PRO_ACTIVE) {
+            return $links;
+        }
+
+        $settings_link = '<a class="jesaei-plugin-pro-link" href="https://jesweb.dev" target="_blank">Get Pro version</a>';
+
+        array_unshift($links, $settings_link);
+
+        return $links;
     }
 
     // add settings link on plugin index page
@@ -103,6 +124,41 @@ class Main {
             // delete transient to force new API call
             delete_transient('jesaei_episodes');
         }
+    }
+
+    public function admin_notice_pro_version() {
+        // Check if the notice has been dismissed
+        if (get_transient('jesaei_notice_dismissed')) {
+            return;
+        }
+
+        if (!JESAEI_IS_PRO_ACTIVE) {
+            echo '<div class="notice notice-info is-dismissible" id="jesaei-pro-version-notice">
+                <p><strong>Upgrade to the new PRO version of Anchor Episodes Index for additional features and benefits!</strong></p>
+                <p><a href="https://jesweb.dev" target="_blank">Get Pro version</a></p>
+            </div>';
+            $this->notice_dismissible_script();
+        }
+    }
+
+    public function notice_dismissible_script() {
+        echo "<script>
+            jQuery(document).on('click', '#jesaei-pro-version-notice .notice-dismiss', function() {
+                jQuery.ajax({
+                    url: ajaxurl,
+                    data: {
+                        action: 'jesaei_dismiss_notice'
+                    }
+                });
+            });
+        </script>";
+    }
+
+    public function dismiss_notice() {
+        // Set the notice to be dismissed for 6 months
+        set_transient('jesaei_notice_dismissed', true, 6 * MONTH_IN_SECONDS);
+
+        wp_die();
     }
 }
 
