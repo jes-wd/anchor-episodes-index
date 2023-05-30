@@ -77,7 +77,7 @@ class JES_Anchor_Settings_Page {
 		// if pro is not active, add a notice at the top of the page to upgrade
 		if (!JESAEI_IS_PRO_ACTIVE) {
 			echo '<div class="notice notice-warning">';
-			echo '<p><strong>Upgrade to Anchor Episodes Index Pro for significant enhancements and more features!</strong></p>';
+			echo '<p><strong>Upgrade to the new Anchor Episodes Index Pro for significant enhancements and more features!</strong></p>';
 			echo '<p><a href="https://jesweb.dev/" target="_blank">View Pro Features</a></p>';
 			echo '</div>';
 		}
@@ -105,7 +105,6 @@ class JES_Anchor_Settings_Page {
 	}
 
 	public function render_site_url_field() {
-
 		// Retrieve data from the database.
 		$options = get_option('jes_anchor_settings');
 
@@ -114,7 +113,7 @@ class JES_Anchor_Settings_Page {
 
 		// Field output.
 		echo '<input type="url" name="jes_anchor_settings[site_url]" class="regular-text site_url_field" placeholder="' . esc_attr__('', 'text_domain') . '" value="' . esc_attr($value) . '">';
-		echo '<p class="description">' . __('Looks like https://anchor.fm/{YOUR SITE NAME} (make sure there is no "/" at the end)', 'text_domain') . '</p>';
+		echo '<p class="description">' . __('Looks like https://anchor.fm/{YOUR SITE NAME} or https://podcasters.spotify.com/pod/show/{YOUR SITE NAME} (make sure there is no "/" at the end)', 'text_domain') . '</p>';
 	}
 
 	public function render_anchor_rss_url_field() {
