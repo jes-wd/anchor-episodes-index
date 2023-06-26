@@ -3,7 +3,7 @@
 /**
  * Plugin Name: Anchor Episodes Index (Spotify for Podcasters)
  * Description: A lightweight plugin that allows you to output an anchor.fm (now called Spotify for Podcasters) podcast player on your site that includes an episode index. Just add two URL's on the settings page, grab the shortcode, and you're good to go!
- * Version: 2.1.0
+ * Version: 2.1.1
  * Author: jesweb.dev
  * Author URI: https://jesweb.dev
  * License: GPLv2 or later
@@ -24,3 +24,9 @@ include(JESAEI_PLUGIN_PATH . 'includes/rss-data-formatting.php');
 include(JESAEI_PLUGIN_PATH . 'includes/functions.php');
 include(JESAEI_PLUGIN_PATH . 'includes/main.php');
 include(JESAEI_PLUGIN_PATH . 'includes/admin-settings-page.php');
+
+function jesaei_on_activate() {
+    // The plugin has been activated, delete the transient
+    delete_transient('jesaei_notice_dismissed');
+}
+register_activation_hook(__FILE__, 'jesaei_on_activate');

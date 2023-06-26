@@ -30,7 +30,7 @@ class Main {
     }
 
     public function enqueue_admin_scripts() {
-        wp_enqueue_style('jesaei-admin-styles', JESAEI_PLUGIN_URL . 'assets/admin.css', array(), filemtime(JESAEI_PLUGIN_PATH . 'dist/admin.css'), 'all');
+        wp_enqueue_style('jesaei-admin-styles', JESAEI_PLUGIN_URL . 'assets/admin.css', array(), filemtime(JESAEI_PLUGIN_PATH . 'assets/admin.css'), 'all');
     }
 
     // register scripts but do not enqueue
@@ -134,8 +134,8 @@ class Main {
 
         if (!JESAEI_IS_PRO_ACTIVE) {
             echo '<div class="notice notice-info is-dismissible" id="jesaei-pro-version-notice">
-                <p><strong>Upgrade to the new PRO version of Anchor Episodes Index for additional features and benefits!</strong></p>
-                <p><a href="https://jesweb.dev" target="_blank">Get Pro version</a></p>
+                <p><strong>Get 50% of Anchor Episodes Index Pro with discount code 50PERCENTAEIP. For a limited time only. </strong></p>
+                <p><a href="https://jesweb.dev" target="_blank">Get the Pro version</a></p>
             </div>';
             $this->notice_dismissible_script();
         }
@@ -156,7 +156,7 @@ class Main {
 
     public function dismiss_notice() {
         // Set the notice to be dismissed for 6 months
-        set_transient('jesaei_notice_dismissed', true, 6 * MONTH_IN_SECONDS);
+        set_transient('jesaei_notice_dismissed', true, 3 * MONTH_IN_SECONDS);
 
         wp_die();
     }
