@@ -16,7 +16,7 @@ class Functions {
     $rss_id = $this->get_unique_id_from_rss_url($rss_url);
     $transient_key = 'jesaei_episodes_' . $rss_id;
 
-    error_log('transient key: ' . $transient_key);
+    // error_log('transient key: ' . $transient_key);
 
     // delete transient
     // delete_transient('jesaei_episodes');
@@ -135,7 +135,6 @@ class Functions {
   }
 
   public function get_unique_id_from_rss_url(string $url) {
-    $url = 'https://anchor.fm/s/d9674470/podcast/rss';
     $path = parse_url($url, PHP_URL_PATH);
     $id = md5($path);
 
