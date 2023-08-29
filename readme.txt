@@ -4,7 +4,7 @@ Tags: anchor.fm, podcast, embed
 Requires at least: 4.8
 Tested up to: 6.2
 Requires PHP: 5.2
-Stable tag: 2.1.1
+Stable tag: 2.1.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -103,3 +103,15 @@ Overrides values set on the settings page:
 
 = 2.1.1 =
 * Fix minor filemtime() issue with admin.css
+
+= 2.1.2 =
+* Add sale notice
+
+= 2.1.3 =
+* Fix sale notice
+
+= 2.1.4 =
+* Fix sale notice
+
+= 2.1.5 =
+* Fix RSS URL override in shortcode attributes - save transient per rss url

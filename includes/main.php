@@ -87,7 +87,7 @@ class Main {
             $html .= '<iframe id="jesaei-anchor-podcast-iframe" src="' . $site_url . '/embed" style="width: 100%;" frameborder="0" scrolling="no" name="jesaei_podcast_iframe"></iframe>';
         }
 
-        $html .= $this->Functions->get_episode_list_html((int) $max_episodes);
+        $html .= $this->Functions->get_episode_list_html((int) $max_episodes, $anchor_rss_url);
 
         return $html;
     }
@@ -134,7 +134,7 @@ class Main {
 
         if (!JESAEI_IS_PRO_ACTIVE) {
             echo '<div class="notice notice-info is-dismissible" id="jesaei-pro-version-notice">
-                <p><strong>Get 50% of Anchor Episodes Index Pro with discount code 50PERCENTAEIP. For a limited time only. </strong></p>
+                <p><strong>Get 50% off Anchor Episodes Index Pro. For a limited time only. </strong></p>
                 <p><a href="https://jesweb.dev" target="_blank">Get the Pro version</a></p>
             </div>';
             $this->notice_dismissible_script();

@@ -3,7 +3,7 @@
 /**
  * Plugin Name: Anchor Episodes Index (Spotify for Podcasters)
  * Description: A lightweight plugin that allows you to output an anchor.fm (now called Spotify for Podcasters) podcast player on your site that includes an episode index. Just add two URL's on the settings page, grab the shortcode, and you're good to go!
- * Version: 2.1.1
+ * Version: 2.1.5
  * Author: jesweb.dev
  * Author URI: https://jesweb.dev
  * License: GPLv2 or later
@@ -25,8 +25,21 @@ include(JESAEI_PLUGIN_PATH . 'includes/functions.php');
 include(JESAEI_PLUGIN_PATH . 'includes/main.php');
 include(JESAEI_PLUGIN_PATH . 'includes/admin-settings-page.php');
 
-function jesaei_on_activate() {
-    // The plugin has been activated, delete the transient
-    delete_transient('jesaei_notice_dismissed');
+// Schedule an hourly event
+if (!wp_next_scheduled('jesaei_hourly_event')) {
+    wp_schedule_event(time(), 'hourly', 'jesaei_hourly_event');
 }
-register_activation_hook(__FILE__, 'jesaei_on_activate');
+
+// This function will run once per hour
+function jesaei_delete_transient_once() {
+    // Check if the transient has already been deleted
+    if (!get_option('jesaei_jun23_sale_transient_deleted')) {
+        // Transient hasn't been deleted yet, delete it now
+        delete_transient('jesaei_notice_dismissed');
+
+        // Set a flag in the options table to indicate that the transient has been deleted
+        update_option('jesaei_jun23_sale_transient_deleted', true);
+    }
+}
+add_action('jesaei_hourly_event', 'jesaei_delete_transient_once');
+

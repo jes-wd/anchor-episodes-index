@@ -13,12 +13,16 @@ class Functions {
 
   public function get_rss_feed() {
     $rss_url = isset($this->options['anchor_rss_url']) ? $this->options['anchor_rss_url'] : '';
+    $rss_id = $this->get_unique_id_from_rss_url($rss_url);
+    $transient_key = 'jesaei_episodes_' . $rss_id;
+
+    error_log('transient key: ' . $transient_key);
 
     // delete transient
     // delete_transient('jesaei_episodes');
 
     // if not stored in transient, fetch rss feed
-    if (false === ($feed_array = get_transient('jesaei_episodes'))) {
+    if (false === ($feed_array = get_transient($transient_key))) {
 
       $ch = curl_init($rss_url);
       curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -56,14 +60,16 @@ class Functions {
       // echo '</pre>';
 
       // save feed array in transient with 15 minute expiration
-      set_transient('jesaei_episodes', $feed_array, 15 * MINUTE_IN_SECONDS);
+      set_transient($transient_key, $feed_array, 15 * MINUTE_IN_SECONDS);
     }
 
     return $feed_array;
   }
 
 
-  public function get_episode_list_html(int $limit) {
+  public function get_episode_list_html(int $limit, string $rss_url = null) {
+    $this->options['anchor_rss_url'] = $rss_url;
+
     $episodes = $this->get_rss_feed();
     $html = '<div id="jesaei-podcast-list-container" class="jesaei-podcast-list-container styles__episodeFeed___3mOKz">';
     $index = 0;
@@ -127,7 +133,12 @@ class Functions {
 
     return $html;
   }
-}
 
-// $Functions = new Functions();
-// $Functions->get_rss_feed();
+  public function get_unique_id_from_rss_url(string $url) {
+    $url = 'https://anchor.fm/s/d9674470/podcast/rss';
+    $path = parse_url($url, PHP_URL_PATH);
+    $id = md5($path);
+
+    return $id;
+  }
+}
