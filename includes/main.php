@@ -82,7 +82,7 @@ class Main {
         $html .= '<div id="jesaei-player-loading-animation" class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>';
 
         if (JESAEI_IS_PRO_ACTIVE) {
-            $html .= $this->Pro_Main->get_player_html();
+            $html .= $this->Pro_Main->get_player_html($anchor_rss_url);
         } else {
             $html .= '<iframe id="jesaei-anchor-podcast-iframe" src="' . $site_url . '/embed" style="width: 100%;" frameborder="0" scrolling="no" name="jesaei_podcast_iframe"></iframe>';
         }
