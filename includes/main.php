@@ -54,19 +54,24 @@ class Main {
 
         // Retrieve settings page data
         $options = get_option('jes_anchor_settings');
-        $site_url_from_options = isset($options['site_url']) ? $options['site_url'] : '';
-        $site_url = strlen($shortcode_attributes['site_url']) > 0 ? $shortcode_attributes['site_url'] : $site_url_from_options;
-        $anchor_rss_url_from_options = isset($options['anchor_rss_url']) ? $options['anchor_rss_url'] : '';
-        $anchor_rss_url = strlen($shortcode_attributes['rss_url']) > 0 ? $shortcode_attributes['rss_url'] : $anchor_rss_url_from_options;
+
+        // Use esc_url to sanitize and escape URL-related data
+        $site_url_from_options = isset($options['site_url']) ? esc_url($options['site_url']) : '';
+        $site_url = strlen($shortcode_attributes['site_url']) > 0 ? esc_url($shortcode_attributes['site_url']) : $site_url_from_options;
+
+        $anchor_rss_url_from_options = isset($options['anchor_rss_url']) ? esc_url($options['anchor_rss_url']) : '';
+        $anchor_rss_url = strlen($shortcode_attributes['rss_url']) > 0 ? esc_url($shortcode_attributes['rss_url']) : $anchor_rss_url_from_options;
+
         $max_episodes_from_options = !empty($options['max_episodes']) ? (int) $options['max_episodes'] : 999;
         $max_episodes = strlen($shortcode_attributes['max_episodes']) > 0 ? (int) $shortcode_attributes['max_episodes'] : $max_episodes_from_options;
+
         $dark_mode = isset($options['dark_mode']) ? $options['dark_mode'] : false;
 
-        // output PHP vars as JS vars
+        // Make sure to escape data before outputting it to JS
         wp_localize_script('jesaei-localized', 'jesaei_settings', [
-            'site_url' => $site_url,
-            'rss_url' => $anchor_rss_url,
-            'max_episodes' => $max_episodes,
+            'site_url' => $site_url,  // Already escaped using esc_url
+            'rss_url' => $anchor_rss_url,  // Already escaped using esc_url
+            'max_episodes' => (int) $max_episodes,  // Int casting already sanitizes this
             'is_pro_version_active' => JESAEI_IS_PRO_ACTIVE
         ]);
         wp_enqueue_script('jesaei-localized');
@@ -134,7 +139,7 @@ class Main {
 
         if (!JESAEI_IS_PRO_ACTIVE) {
             echo '<div class="notice notice-info is-dismissible" id="jesaei-pro-version-notice">
-                <p><strong>Get 50% off Anchor Episodes Index Pro. For a limited time only. </strong></p>
+                <p><strong>Get 50% off Anchor Episodes Index Pro. For a limited time only. Get a superior episode player along with added features. </strong></p>
                 <p><a href="https://jesweb.dev" target="_blank">Get the Pro version</a></p>
             </div>';
             $this->notice_dismissible_script();

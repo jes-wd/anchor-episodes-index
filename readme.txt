@@ -4,7 +4,7 @@ Tags: anchor.fm, podcast, embed
 Requires at least: 4.8
 Tested up to: 6.3
 Requires PHP: 5.2
-Stable tag: 2.1.7
+Stable tag: 2.1.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -121,3 +121,6 @@ Overrides values set on the settings page:
 
 = 2.1.7 =
 * RSS URL override - handle for pro version
+
+= 2.1.8 =
+* Fix XSS vulnerability - alerted by patchstack.com
