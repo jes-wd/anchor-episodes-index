@@ -10,6 +10,7 @@ class Functions {
     $this->options = get_option('jes_anchor_settings');
     $this->RSS_Data_Formatting = new RSS_Data_Formatting();
   }
+
   public function get_rss_feed() {
     $rss_url = isset($this->options['anchor_rss_url']) ? $this->options['anchor_rss_url'] : '';
     $rss_id = $this->get_unique_id_from_rss_url($rss_url);
@@ -76,12 +77,12 @@ class Functions {
   }
 
 
-  public function get_episode_list_html(int $limit, string $rss_url = null) {
+  public function get_episode_list_html(int $limit, string $rss_url = null, $offset = 0) {
     $this->options['anchor_rss_url'] = $rss_url;
     require('svgs.php');
 
     $episodes = $this->get_rss_feed();
-    $html = '<div id="jesaei-podcast-list-container" class="jesaei-podcast-list-container styles__episodeFeed___3mOKz">';
+    $episodes = array_slice($episodes, $offset);
     $index = 0;
 
     foreach ($episodes as $episode) {
@@ -104,7 +105,7 @@ class Functions {
         $link_attributes .= 'href="' . $episode['iframe_url'] . '" target="jesaei_podcast_iframe"';
       }
 
-      $html .= '
+      $html = '
         <div class="styles__episodeFeedItem___1U6E2 ' . (JESAEI_IS_PRO_ACTIVE ? ($index === 0 ? 'jesaeip-selected-episode' : '') : '') . '">
           <span class="styles__isActiveEpisode___cXlB4"></span>  
           <a class="jesaeip-episode-play-btn podcast-list-link styles__episodeImage___tMifW" ' . $link_attributes . ' aria-label="Play ' . $episode['title'] . '">
@@ -135,9 +136,7 @@ class Functions {
 
       $index++;
     }
-
-    $html .= '</div>';
-
+    
     return $html;
   }
 

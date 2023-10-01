@@ -55,7 +55,6 @@ class Main {
         // Retrieve settings page data
         $options = get_option('jes_anchor_settings');
 
-        // Use esc_url to sanitize and escape URL-related data
         $site_url_from_options = isset($options['site_url']) ? esc_url($options['site_url']) : '';
         $site_url = strlen($shortcode_attributes['site_url']) > 0 ? esc_url($shortcode_attributes['site_url']) : $site_url_from_options;
 
@@ -69,9 +68,9 @@ class Main {
 
         // Make sure to escape data before outputting it to JS
         wp_localize_script('jesaei-localized', 'jesaei_settings', [
-            'site_url' => $site_url,  // Already escaped using esc_url
-            'rss_url' => $anchor_rss_url,  // Already escaped using esc_url
-            'max_episodes' => (int) $max_episodes,  // Int casting already sanitizes this
+            'site_url' => $site_url,
+            'rss_url' => $anchor_rss_url,
+            'max_episodes' => (int) $max_episodes,
             'is_pro_version_active' => JESAEI_IS_PRO_ACTIVE
         ]);
         wp_enqueue_script('jesaei-localized');
@@ -83,7 +82,7 @@ class Main {
             $this->Pro_Main->enqueue_scripts();
         }
 
-        $html = '<div id="jesaei-player-container" class="pro-active-' . (JESAEI_IS_PRO_ACTIVE ? 'yes' : 'no') . ' ' . ($dark_mode ? 'jesaeip-dark-theme' : '') . '">';
+        $html = '<div id="jesaei-player-container" class="pro-active-' . (JESAEI_IS_PRO_ACTIVE ? 'yes' : 'no') . ' ' . ($dark_mode ? 'jesaeip-dark-theme' : '') . '"  data-max-episodes="' . $max_episodes . '" data-rss-url="' . $anchor_rss_url . '">';
         $html .= '<div id="jesaei-player-loading-animation" class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>';
 
         if (JESAEI_IS_PRO_ACTIVE) {
@@ -92,7 +91,10 @@ class Main {
             $html .= '<iframe id="jesaei-anchor-podcast-iframe" src="' . $site_url . '/embed" style="width: 100%;" frameborder="0" scrolling="no" name="jesaei_podcast_iframe"></iframe>';
         }
 
+        $html .= '<div id="jesaei-podcast-list-container" class="jesaei-podcast-list-container styles__episodeFeed___3mOKz">';
         $html .= $this->Functions->get_episode_list_html((int) $max_episodes, $anchor_rss_url);
+        $html .= apply_filters('jesaei_episode_list_end', '');
+        $html .= '</div>';
 
         return $html;
     }
