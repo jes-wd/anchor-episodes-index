@@ -66,7 +66,7 @@ class Functions {
         );
       }
 
-      error_log('feed array: ' . print_r($feed_array, true));
+      // error_log('feed array: ' . print_r($feed_array, true));
 
       // save feed array in transient with 15 minute expiration
       set_transient($transient_key, $feed_array, 15 * MINUTE_IN_SECONDS);
