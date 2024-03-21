@@ -1,10 +1,10 @@
 === Anchor Episodes Index (Spotify for Podcasters) ===
 Contributors: jeswd
-Tags: anchor.fm, podcast, embed
+Tags: anchor.fm, podcast, embed, spotify
 Requires at least: 4.8
-Tested up to: 6.3
+Tested up to: 6.4
 Requires PHP: 5.2
-Stable tag: 2.1.8
+Stable tag: 2.1.9
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -124,3 +124,7 @@ Overrides values set on the settings page:
 
 = 2.1.8 =
 * Fix XSS vulnerability - alerted by patchstack.com
+
+= 2.1.9 =
+* Test with WP 6.4
+
