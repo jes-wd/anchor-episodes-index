@@ -47,22 +47,22 @@ class Functions {
         // $thumbnail_url = $upload_dir['baseurl'] . '/anchor-episodes-index/' . $image_name;
 
         $feed_array[] = array(
-          "title" => (string)$item->title,
-          "title_excerpt" => (string)$this->RSS_Data_Formatting->get_title_excerpt($item->title),
-          "iframe_url" => (string)$this->RSS_Data_Formatting->get_iframe_url($item->link),
-          "audio_url" => (string)$item->enclosure->attributes()->url,
-          "description" => (string)$this->RSS_Data_Formatting->sanitize_description($item->description),
-          "description_excerpt" => (string)$this->RSS_Data_Formatting->get_description_excerpt($item->description),
-          "published_date" => (string)$this->RSS_Data_Formatting->get_published_date($item->pubDate),
-          "guid" => (string)$item->guid,
-          "image_url" => $image_url,
-          "author" => (string)$itunes_data->author,
-          "subtitle" => (string)$itunes_data->subtitle,
-          "summary" => (string)$itunes_data->summary,
-          "duration" => (string)$itunes_data->duration,
-          "keywords" => (string)$itunes_data->keywords,
-          "site_url" => (string)$item->link,
-          "author" => (string)$feed_xml->channel->image->title
+          "title" => esc_html((string)$item->title),
+          "title_excerpt" => esc_html((string)$this->RSS_Data_Formatting->get_title_excerpt($item->title)),
+          "iframe_url" => esc_url((string)$this->RSS_Data_Formatting->get_iframe_url($item->link)),
+          "audio_url" => esc_url((string)$item->enclosure->attributes()->url),
+          "description" => (string) $this->RSS_Data_Formatting->sanitize_description($item->description),
+          "description_excerpt" => wp_kses_post((string)$this->RSS_Data_Formatting->get_description_excerpt($item->description)),
+          "published_date" => esc_html((string)$this->RSS_Data_Formatting->get_published_date($item->pubDate)),
+          "guid" => esc_html((string)$item->guid),
+          "image_url" => esc_url($image_url),
+          "author" => esc_html((string)$itunes_data->author),
+          "subtitle" => esc_html((string)$itunes_data->subtitle),
+          "summary" => esc_html((string)$itunes_data->summary),
+          "duration" => esc_html((string)$itunes_data->duration),
+          "keywords" => esc_html((string)$itunes_data->keywords),
+          "site_url" => esc_url((string)$item->link),
+          "author" => esc_html((string)$feed_xml->channel->image->title)
         );
       }
 

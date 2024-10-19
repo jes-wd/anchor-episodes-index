@@ -28,7 +28,6 @@ class Main {
         add_action('admin_notices', [$this, 'admin_notice_pro_version']);
         add_action('wp_ajax_jesaei_dismiss_notice', [$this, 'dismiss_notice']);
     }
-
     public function enqueue_admin_scripts() {
         wp_enqueue_style('jesaei-admin-styles', JESAEI_PLUGIN_URL . 'assets/admin.css', array(), filemtime(JESAEI_PLUGIN_PATH . 'assets/admin.css'), 'all');
     }
@@ -44,6 +43,16 @@ class Main {
         add_shortcode('anchor_episodes', [$this, 'shortcode']);
     }
 
+    // Function to validate allowed domains and sanitize URL
+    public function validate_and_sanitize_url($url) {
+        $parsed_url = parse_url($url);
+        $allowed_domains = ['podcasters.spotify.com', 'anchor.fm'];
+        if (in_array($parsed_url['host'], $allowed_domains)) {
+            return esc_url(sanitize_url($url));
+        }
+        return '';
+    }
+
     // shortcode main function
     public function shortcode($atts) {
         $shortcode_attributes = shortcode_atts(array(
@@ -51,16 +60,16 @@ class Main {
             'rss_url' => '',
             'max_episodes' => ''
         ), $atts);
-
+        
         // Retrieve settings page data
         $options = get_option('jes_anchor_settings');
 
-        // Use esc_url to sanitize and escape URL-related data
-        $site_url_from_options = isset($options['site_url']) ? esc_url($options['site_url']) : '';
-        $site_url = strlen($shortcode_attributes['site_url']) > 0 ? esc_url($shortcode_attributes['site_url']) : $site_url_from_options;
+        // Use the new function to validate, sanitize, and escape URL-related data
+        $site_url_from_options = isset($options['site_url']) ? $this->validate_and_sanitize_url($options['site_url']) : '';
+        $site_url = strlen($shortcode_attributes['site_url']) > 0 ? $this->validate_and_sanitize_url($shortcode_attributes['site_url']) : $site_url_from_options;
 
-        $anchor_rss_url_from_options = isset($options['anchor_rss_url']) ? esc_url($options['anchor_rss_url']) : '';
-        $anchor_rss_url = strlen($shortcode_attributes['rss_url']) > 0 ? esc_url($shortcode_attributes['rss_url']) : $anchor_rss_url_from_options;
+        $anchor_rss_url_from_options = isset($options['anchor_rss_url']) ? $this->validate_and_sanitize_url($options['anchor_rss_url']) : '';
+        $anchor_rss_url = strlen($shortcode_attributes['rss_url']) > 0 ? $this->validate_and_sanitize_url($shortcode_attributes['rss_url']) : $anchor_rss_url_from_options;
 
         $max_episodes_from_options = !empty($options['max_episodes']) ? (int) $options['max_episodes'] : 999;
         $max_episodes = strlen($shortcode_attributes['max_episodes']) > 0 ? (int) $shortcode_attributes['max_episodes'] : $max_episodes_from_options;
