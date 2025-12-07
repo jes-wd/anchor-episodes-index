@@ -21,7 +21,7 @@ class RSS_Data_Formatting {
         $site_url_path_parts = explode('/', $site_url_path);
         $site_id = end($site_url_path_parts);
         // create the embed url
-        $iframe_url = 'https://podcasters.spotify.com/pod/show/' . $site_id . '/embed/episodes/' . $episode_id;
+        $iframe_url = 'https://creators.spotify.com/pod/show/' . $site_id . '/embed/episodes/' . $episode_id;
 
         return $iframe_url;
     }

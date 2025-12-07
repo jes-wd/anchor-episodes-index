@@ -4,7 +4,7 @@ Tags: anchor.fm, podcast, embed, spotify
 Requires at least: 4.8
 Tested up to: 6.6
 Requires PHP: 7.4
-Stable tag: 2.1.11
+Stable tag: 2.1.14
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -30,7 +30,7 @@ Once activated, go to the settings and fill out the Anchor Site URL and Anchor R
 
 Then copy the shortcode you'll see on the settings page and paste it in any page or post.
 
-If you want to add multiple different podcasts on the site, you can define the RSS and Site URL's as shortcode attributes instead of on the settings page. Note, you cannot currently output two players on one page.
+If you want to add multiple different podcasts on the site, you can define the RSS and Site URL's as shortcode attributes instead of on the settings page. Note, you cannot currently output more than one player on one page.
 
 == Shortcode examples ==
 Uses values set in the settings page:
@@ -129,3 +129,12 @@ Overrides values set on the settings page:
 
 = 2.1.11 =
 * Fix XSS vulnerability for contributor role
+
+= 2.1.12 =
+* Add creators.spotify.com to allowed domains
+
+= 2.1.13 =
+* Fix cookie notice coming from Spotify
+
+= 2.1.14 =
+* Test with WP 6.9

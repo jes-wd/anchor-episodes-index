@@ -46,7 +46,7 @@ class Main {
     // Function to validate allowed domains and sanitize URL
     public function validate_and_sanitize_url($url) {
         $parsed_url = parse_url($url);
-        $allowed_domains = ['podcasters.spotify.com', 'anchor.fm'];
+        $allowed_domains = ['podcasters.spotify.com', 'anchor.fm', 'creators.spotify.com'];
         if (in_array($parsed_url['host'], $allowed_domains)) {
             return esc_url(sanitize_url($url));
         }
@@ -98,7 +98,9 @@ class Main {
         if (JESAEI_IS_PRO_ACTIVE) {
             $html .= $this->Pro_Main->get_player_html($anchor_rss_url);
         } else {
+            $html .= '<div id="jesaei-anchor-podcast-iframe-container">';
             $html .= '<iframe id="jesaei-anchor-podcast-iframe" src="' . $site_url . '/embed" style="width: 100%;" frameborder="0" scrolling="no" name="jesaei_podcast_iframe"></iframe>';
+            $html .= '</div>';
         }
 
         $html .= $this->Functions->get_episode_list_html((int) $max_episodes, $anchor_rss_url);

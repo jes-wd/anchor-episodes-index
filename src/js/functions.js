@@ -87,17 +87,20 @@ const setShowMoreEvents = () => {
 
 export const setPlayerIframeHeight = () => {
   // set responsive breakpoint for the player iframe - adjust height
+  const anchorIframeContainer = document.getElementById(
+    'jesaei-anchor-podcast-iframe-container'
+  )
   const anchorIframe = document.getElementById('jesaei-anchor-podcast-iframe')
-  const anchorIframeWidth = anchorIframe.offsetWidth
+  const anchorIframeWidth = anchorIframeContainer.offsetWidth
   const loadingAnimation = document.getElementById(
     'jesaei-player-loading-animation'
   )
 
   if (anchorIframeWidth > 768) {
-    anchorIframe.style.height = '161px'
     loadingAnimation.style.top = '40px'
+    anchorIframeContainer.style.height = '161px'
   } else {
-    anchorIframe.style.height = '98px'
     loadingAnimation.style.top = '10px'
+    anchorIframeContainer.style.height = '100px'
   }
 }

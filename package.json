@@ -7,7 +7,7 @@
     "start": "webpack --mode production",
     "build": "webpack --mode production",
     "dev": "webpack --mode development",
-    "build-svn": "rsync -av --progress ./ ~/dev/svn/anchor-episodes-index/trunk --exclude-from='rsync-excludes.txt' && rsync -av --progress ./ ~/dev/svn/anchor-episodes-index/tags/2.1.11 --exclude-from='rsync-excludes.txt'"
+    "build-svn": "rsync -av --progress ./ ~/dev/svn/anchor-episodes-index/trunk --exclude-from='rsync-excludes.txt' && rsync -av --progress ./ ~/dev/svn/anchor-episodes-index/tags/2.1.13 --exclude-from='rsync-excludes.txt'"
   },
   "repository": {
     "type": "git",
@@ -20,12 +20,12 @@
   },
   "homepage": "https://github.com/jes-wd/anchor-episodes-index#readme",
   "dependencies": {
+    "sass": "^1.85.1",
     "style-loader": "^3.3.1"
   },
   "devDependencies": {
     "css-loader": "^6.7.1",
     "mini-css-extract-plugin": "^2.6.0",
-    "node-sass": "^7.0.1",
     "sass-loader": "^12.6.0",
     "source-map-loader": "^3.0.1",
     "webpack": "^5.72.0",
