@@ -86,6 +86,40 @@ class RSS_Data_Formatting {
      *
      * get_published_date() returns a display string with no time component.
      */
+    /**
+     * Format itunes:duration for display.
+     *
+     * The spec allows HH:MM:SS, MM:SS or a plain number of seconds, and hosts
+     * use all three. Values that are already clock-formatted are passed
+     * through untouched; a bare number is converted, which previously rendered
+     * as "2486" instead of "41:26".
+     */
+    public function format_duration($duration): string {
+        $duration = trim((string) $duration);
+
+        if ($duration === '') {
+            return '';
+        }
+
+        if (!ctype_digit($duration)) {
+            return $duration;
+        }
+
+        $seconds = (int) $duration;
+
+        if ($seconds <= 0) {
+            return '';
+        }
+
+        $hours   = intdiv($seconds, 3600);
+        $minutes = intdiv($seconds % 3600, 60);
+        $secs    = $seconds % 60;
+
+        return $hours > 0
+            ? sprintf('%d:%02d:%02d', $hours, $minutes, $secs)
+            : sprintf('%02d:%02d', $minutes, $secs);
+    }
+
     public function get_published_timestamp($date): int {
         $date = trim((string) $date);
 

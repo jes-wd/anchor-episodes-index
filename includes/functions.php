@@ -152,7 +152,7 @@ class Functions {
         "image_url" => esc_url($image_url),
         "subtitle" => esc_html((string)$itunes_data->subtitle),
         "summary" => esc_html((string)$itunes_data->summary),
-        "duration" => esc_html((string)$itunes_data->duration),
+        "duration" => esc_html($this->RSS_Data_Formatting->format_duration($itunes_data->duration)),
         "keywords" => esc_html((string)$itunes_data->keywords),
         "site_url" => esc_url((string)$item->link),
         "author" => esc_html($channel_title)

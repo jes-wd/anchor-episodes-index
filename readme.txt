@@ -173,3 +173,4 @@ Overrides values set on the settings page:
 * Episode data is available to other plugins and themes through the new `jesaei_episode_data` filter.
 * The cached feed is around 23% smaller despite the extra data, because the full episode description was being stored twice.
 * The publish time of each episode is now kept, not just the date.
+* Episode durations are formatted correctly when your host publishes them as a plain number of seconds. They previously displayed as "2486" instead of "41:26"; Transistor, among others, uses seconds.
