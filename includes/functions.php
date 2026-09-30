@@ -2,85 +2,167 @@
 
 namespace Anchor_Episodes_Index;
 
+if (!defined('ABSPATH')) {
+  exit;
+}
+
 class Functions {
   public $options;
   public $RSS_Data_Formatting;
+
+  /** Seconds to cache a successful feed fetch. */
+  const FEED_CACHE_TTL = 15 * MINUTE_IN_SECONDS;
+
+  /** Seconds to cache a FAILED feed fetch, so a dead feed is not re-fetched on every page view. */
+  const FEED_FAIL_CACHE_TTL = 2 * MINUTE_IN_SECONDS;
 
   public function __construct() {
     $this->options = get_option('jes_anchor_settings');
     $this->RSS_Data_Formatting = new RSS_Data_Formatting();
   }
+
+  /**
+   * Transient key for a given feed URL. Public so callers (e.g. the settings
+   * save handler) can invalidate the right cache entry.
+   */
+  public function get_transient_key(string $rss_url = '') {
+    return 'jesaei_episodes_' . $this->get_unique_id_from_rss_url($rss_url);
+  }
+
+  /**
+   * Fetch and parse the podcast RSS feed.
+   *
+   * Always returns an array. On any failure (bad URL, network error, non-200,
+   * unparseable XML, feed with no <item> elements) it returns an empty array
+   * rather than emitting warnings or fataling on PHP 8.
+   */
   public function get_rss_feed() {
-    $rss_url = isset($this->options['anchor_rss_url']) ? $this->options['anchor_rss_url'] : '';
-    $rss_id = $this->get_unique_id_from_rss_url($rss_url);
-    $transient_key = 'jesaei_episodes_' . $rss_id;
+    $rss_url = isset($this->options['anchor_rss_url']) ? (string) $this->options['anchor_rss_url'] : '';
 
-    // delete transient
-    // delete_transient($transient_key);
+    if ($rss_url === '') {
+      return array();
+    }
 
-    // if not stored in transient, fetch rss feed
-    if (false === ($feed_array = get_transient($transient_key))) {
+    $transient_key = $this->get_transient_key($rss_url);
 
-      $ch = curl_init($rss_url);
-      curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-      $feed_content = curl_exec($ch);
-      curl_close($ch);
+    $cached = get_transient($transient_key);
+    if (is_array($cached)) {
+      return $cached;
+    }
 
-      $feed_xml = simplexml_load_string($feed_content);
-      $feed_array = array();
+    $feed_content = $this->request_feed($rss_url);
 
-      foreach ($feed_xml->channel->item as $item) {
-        $itunes_data = $item->children('itunes', true);
-        $image_url = (string)$itunes_data->image->attributes()->href;
-        // $image_name = basename($image_url);
-        // $image_exists_in_custom_folder = $this->image_exists_in_custom_folder($image_name);
+    if ($feed_content === null) {
+      // Negative-cache so a broken feed does not hammer the remote host or
+      // block every page render while it is down.
+      set_transient($transient_key, array(), self::FEED_FAIL_CACHE_TTL);
+      return array();
+    }
 
-        // // If image does not exist in custom folder, download and save it
-        // if (!$image_exists_in_custom_folder) {
-        //   error_log('image does not exist in custom folder');
-        //   error_log('image name: ' . $image_name);
-        //   $this->save_image_to_custom_folder($image_url, $image_name);
-        // }
+    $feed_array = $this->parse_feed($feed_content);
 
-        // // Get thumbnail URL of the image
-        // $upload_dir = wp_upload_dir();
-        // $thumbnail_url = $upload_dir['baseurl'] . '/anchor-episodes-index/' . $image_name;
+    set_transient(
+      $transient_key,
+      $feed_array,
+      empty($feed_array) ? self::FEED_FAIL_CACHE_TTL : self::FEED_CACHE_TTL
+    );
 
-        $feed_array[] = array(
-          "title" => esc_html((string)$item->title),
-          "title_excerpt" => esc_html((string)$this->RSS_Data_Formatting->get_title_excerpt($item->title)),
-          "iframe_url" => esc_url((string)$this->RSS_Data_Formatting->get_iframe_url($item->link)),
-          "audio_url" => esc_url((string)$item->enclosure->attributes()->url),
-          "description" => (string) $this->RSS_Data_Formatting->sanitize_description($item->description),
-          "description_excerpt" => wp_kses_post((string)$this->RSS_Data_Formatting->get_description_excerpt($item->description)),
-          "published_date" => esc_html((string)$this->RSS_Data_Formatting->get_published_date($item->pubDate)),
-          "guid" => esc_html((string)$item->guid),
-          "image_url" => esc_url($image_url),
-          "author" => esc_html((string)$itunes_data->author),
-          "subtitle" => esc_html((string)$itunes_data->subtitle),
-          "summary" => esc_html((string)$itunes_data->summary),
-          "duration" => esc_html((string)$itunes_data->duration),
-          "keywords" => esc_html((string)$itunes_data->keywords),
-          "site_url" => esc_url((string)$item->link),
-          "author" => esc_html((string)$feed_xml->channel->image->title)
-        );
-      }
+    return $feed_array;
+  }
 
-      // error_log('feed array: ' . print_r($feed_array, true));
+  /**
+   * Perform the HTTP request.
+   *
+   * Uses wp_safe_remote_get() rather than raw cURL: it respects the site's
+   * HTTP configuration, works on hosts without the cURL extension, always has
+   * a timeout, and blocks requests to private/internal addresses (the feed URL
+   * can come from a shortcode attribute, so it is not fully trusted input).
+   *
+   * @return string|null Response body, or null on any failure.
+   */
+  private function request_feed(string $rss_url) {
+    $response = wp_safe_remote_get(
+      $rss_url,
+      array(
+        'timeout'    => 10,
+        'user-agent' => 'AnchorEpisodesIndex/' . (defined('JESAEI_VERSION') ? JESAEI_VERSION : '0') . '; ' . home_url('/'),
+      )
+    );
 
-      // save feed array in transient with 15 minute expiration
-      set_transient($transient_key, $feed_array, 15 * MINUTE_IN_SECONDS);
+    if (is_wp_error($response)) {
+      return null;
+    }
+
+    if ((int) wp_remote_retrieve_response_code($response) !== 200) {
+      return null;
+    }
+
+    $body = wp_remote_retrieve_body($response);
+
+    return ($body === '') ? null : $body;
+  }
+
+  /**
+   * Turn feed XML into the episode array.
+   *
+   * @return array Empty array if the XML cannot be parsed or has no items.
+   */
+  private function parse_feed(string $feed_content) {
+    // Keep malformed-feed warnings out of the page output / error log.
+    $previous_state = libxml_use_internal_errors(true);
+    $feed_xml       = simplexml_load_string($feed_content);
+    libxml_clear_errors();
+    libxml_use_internal_errors($previous_state);
+
+    if ($feed_xml === false || !isset($feed_xml->channel->item)) {
+      return array();
+    }
+
+    $channel_title = isset($feed_xml->channel->image->title)
+      ? (string) $feed_xml->channel->image->title
+      : (isset($feed_xml->channel->title) ? (string) $feed_xml->channel->title : '');
+
+    $feed_array = array();
+
+    foreach ($feed_xml->channel->item as $item) {
+      $itunes_data = $item->children('itunes', true);
+
+      $image_url = isset($itunes_data->image) && isset($itunes_data->image->attributes()->href)
+        ? (string) $itunes_data->image->attributes()->href
+        : '';
+
+      $audio_url = isset($item->enclosure) && isset($item->enclosure->attributes()->url)
+        ? (string) $item->enclosure->attributes()->url
+        : '';
+
+      $feed_array[] = array(
+        "title" => esc_html((string)$item->title),
+        "title_excerpt" => esc_html((string)$this->RSS_Data_Formatting->get_title_excerpt($item->title)),
+        "iframe_url" => esc_url((string)$this->RSS_Data_Formatting->get_iframe_url($item->link)),
+        "audio_url" => esc_url($audio_url),
+        "description" => (string) $this->RSS_Data_Formatting->sanitize_description($item->description),
+        "description_excerpt" => wp_kses_post((string)$this->RSS_Data_Formatting->get_description_excerpt($item->description)),
+        "published_date" => esc_html((string)$this->RSS_Data_Formatting->get_published_date($item->pubDate)),
+        "guid" => esc_html((string)$item->guid),
+        "image_url" => esc_url($image_url),
+        "subtitle" => esc_html((string)$itunes_data->subtitle),
+        "summary" => esc_html((string)$itunes_data->summary),
+        "duration" => esc_html((string)$itunes_data->duration),
+        "keywords" => esc_html((string)$itunes_data->keywords),
+        "site_url" => esc_url((string)$item->link),
+        "author" => esc_html($channel_title)
+      );
     }
 
     return $feed_array;
   }
 
-
-  public function get_episode_list_html(int $limit, string $rss_url = null) {
+  public function get_episode_list_html(int $limit, ?string $rss_url = null) {
     $this->options['anchor_rss_url'] = $rss_url;
     require('svgs.php');
 
     $episodes = $this->get_rss_feed();
+
     $html = '<div id="jesaei-podcast-list-container" class="jesaei-podcast-list-container styles__episodeFeed___3mOKz">';
     $index = 0;
 
@@ -143,51 +225,16 @@ class Functions {
 
   public function get_unique_id_from_rss_url(string $url) {
     $path = parse_url($url, PHP_URL_PATH);
+
+    // parse_url() returns null when there is no path component, and false on a
+    // seriously malformed URL. md5() requires a string on PHP 8.
+    if (!is_string($path)) {
+      $path = '';
+    }
+
     $id = md5($path);
 
     return $id;
-  }
-
-  function image_exists_in_custom_folder($filename) {
-    $upload_dir = wp_upload_dir();
-    $custom_folder = $upload_dir['basedir'] . '/anchor-episodes-index/';
-    return file_exists($custom_folder . $filename);
-  }
-
-
-  function save_image_to_custom_folder($image_url) {
-    $upload_dir = wp_upload_dir();
-    $custom_folder = $upload_dir['basedir'] . '/anchor-episodes-index/';
-    $custom_url = $upload_dir['baseurl'] . '/anchor-episodes-index/';
-
-    // Create custom folder if it doesn't exist
-    if (!file_exists($custom_folder)) {
-      mkdir($custom_folder, 0755, true);
-    }
-
-    // Get the filename from the URL
-    $filename = basename($image_url);
-
-    // Check if the file already exists in the custom folder
-    if (file_exists($custom_folder . $filename)) {
-      return $custom_url . $filename;
-    }
-
-    // Get the image file
-    $image_data = file_get_contents($image_url);
-
-    // Save the image file to the custom folder
-    $file_path = $custom_folder . $filename;
-    file_put_contents($file_path, $image_data);
-
-    // Resize the image to 150x150
-    $image = imagecreatefromstring($image_data);
-    $resized_image = imagescale($image, 150, 150);
-    imagejpeg($resized_image, $file_path);
-    imagedestroy($image);
-    imagedestroy($resized_image);
-
-    return $custom_url . $filename;
   }
 
   public function set_rss_url(string $rss_url) {

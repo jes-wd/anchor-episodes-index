@@ -4,7 +4,7 @@ Tags: anchor.fm, podcast, embed, spotify
 Requires at least: 4.8
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 2.1.15
+Stable tag: 2.2.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -141,3 +141,14 @@ Overrides values set on the settings page:
 
 = 2.1.15 =
 * Update readme
+
+= 2.2.0 =
+* Compatibility: added a version handshake between the free and Pro plugins. An out-of-date Pro build now falls back gracefully and shows a notice instead of risking a fatal error.
+* Pro integration now runs through hooks (`jesaei_player_html`, `jesaei_enqueue_player_assets`, `jesaei_pro_api_version`) rather than direct calls. The old direct-call path is retained for existing Pro builds.
+* Fixed episode links being built as broken URLs (with a doubled slash) when the Site URL setting was empty, and removed the PHP 8 warnings that went with it.
+* Fixed a cascade of PHP warnings, printed into the page on some hosts, when a podcast feed was unreachable, returned a non-200, or contained invalid XML. The player now renders an empty list cleanly.
+* Feed requests now use the WordPress HTTP API with a 10 second timeout, and work on hosts without the cURL extension.
+* Fixed the episode cache not clearing when settings were saved.
+* The settings passed to JavaScript no longer require the empty dist/localized.js file, removing one HTTP request per page and a build step that webpack never produced.
+* Removed includes/class-anchor-episodes-index.php, an unused legacy copy of the main class that declared a second class with the same name in the same namespace.
+* No changes to the shortcode, its attributes, saved settings, or CSS class names.

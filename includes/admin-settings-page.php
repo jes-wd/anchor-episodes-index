@@ -65,7 +65,11 @@ class JES_Anchor_Settings_Page {
 			'jes_anchor_settings_section'
 		);
 
+		// Legacy hook name (kept forever: older Pro builds hook this one).
 		do_action('jesaeip_add_settings_fields');
+
+		// Correctly-prefixed alias for current and future integrations.
+		do_action('jesaei_add_settings_fields');
 	}
 
 	public function page_layout() {

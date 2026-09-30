@@ -2,6 +2,10 @@
 
 namespace Anchor_Episodes_Index;
 
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 class RSS_Data_Formatting {
     public $options;
     public $episode;
@@ -11,19 +15,50 @@ class RSS_Data_Formatting {
         $this->episode = null;
     }
 
+    /**
+     * Build the Spotify embed URL for a single episode.
+     *
+     * Returns an empty string when there is no usable site_url. The Spotify
+     * embed is only meaningful for Spotify-hosted shows, and site_url is
+     * optional, so every caller must tolerate an empty result.
+     *
+     * Previously this passed a possibly-null site_url straight into
+     * parse_url(), which is a deprecation notice on PHP 8.1+ and a fatal in
+     * the explode() immediately after it.
+     */
     public function get_iframe_url($url): string {
-        // get the last path from the url
-        $url_path = parse_url($url, PHP_URL_PATH);
-        $url_path_parts = explode('/', $url_path);
-        $episode_id = end($url_path_parts);
-        // get the last path from the site_url
-        $site_url_path = parse_url($this->options['site_url'], PHP_URL_PATH);
-        $site_url_path_parts = explode('/', $site_url_path);
-        $site_id = end($site_url_path_parts);
-        // create the embed url
-        $iframe_url = 'https://creators.spotify.com/pod/show/' . $site_id . '/embed/episodes/' . $episode_id;
+        $site_url = isset($this->options['site_url']) ? (string) $this->options['site_url'] : '';
 
-        return $iframe_url;
+        // $url arrives as a SimpleXMLElement from the feed parser.
+        $url = is_scalar($url) || is_object($url) ? (string) $url : '';
+
+        if ($site_url === '' || $url === '') {
+            return '';
+        }
+
+        $episode_id = $this->get_last_path_segment($url);
+        $site_id    = $this->get_last_path_segment($site_url);
+
+        if ($episode_id === '' || $site_id === '') {
+            return '';
+        }
+
+        return 'https://creators.spotify.com/pod/show/' . $site_id . '/embed/episodes/' . $episode_id;
+    }
+
+    /**
+     * Last non-empty path segment of a URL, or '' if there is not one.
+     */
+    private function get_last_path_segment(string $url): string {
+        $path = parse_url($url, PHP_URL_PATH);
+
+        if (!is_string($path) || $path === '') {
+            return '';
+        }
+
+        $parts = array_values(array_filter(explode('/', $path), 'strlen'));
+
+        return empty($parts) ? '' : (string) end($parts);
     }
 
     public function get_title_excerpt($title) {
@@ -47,7 +82,20 @@ class RSS_Data_Formatting {
     }
 
     public function get_published_date($date): string {
-        $date = new \DateTime($date);
+        $date = (string) $date;
+
+        // new DateTime('') is "now"; an unparseable string throws. Neither is
+        // useful output, so fall back to an empty string.
+        if ($date === '') {
+            return '';
+        }
+
+        try {
+            $date = new \DateTime($date);
+        } catch (\Exception $e) {
+            return '';
+        }
+
         // get the month name from the date
         $month_names = [
             'January',
