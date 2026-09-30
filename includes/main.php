@@ -103,15 +103,13 @@ class Main {
     public function register_scripts() {
         wp_register_style('jesaei-styles', JESAEI_PLUGIN_URL . 'dist/main.css', array(), $this->asset_version('dist/main.css'), 'all');
 
-        // Data-only handle. There is no dist/localized.js and the build never
-        // produced one; registering with src=false is the supported way to
-        // carry wp_localize_script() output, and stops the 404 + filemtime
-        // warning this used to cause on every render.
-        wp_register_script('jesaei-localized', false, array(), JESAEI_VERSION, true);
-
-        // Depend on the data handle so jesaei_settings is always defined
-        // before the bundle that reads it runs.
-        wp_register_script('jesaei-scripts', JESAEI_PLUGIN_URL . 'dist/jesaei.bundle.js', array('jesaei-localized'), $this->asset_version('dist/jesaei.bundle.js'), true);
+        // The settings are attached to the bundle itself rather than to a
+        // separate data-only handle. WordPress prints a handle's localized
+        // data immediately before its script tag, so jesaei_settings is always
+        // defined before the code that reads it, with one less handle to keep
+        // in sync. The old dist/localized.js was a zero-byte file that webpack
+        // never produced.
+        wp_register_script('jesaei-scripts', JESAEI_PLUGIN_URL . 'dist/jesaei.bundle.js', array(), $this->asset_version('dist/jesaei.bundle.js'), true);
     }
 
     public function register_shortcode() {
@@ -254,6 +252,13 @@ class Main {
 
     // shortcode main function
     public function shortcode($atts) {
+        // Block themes render template content BEFORE wp_enqueue_scripts
+        // fires, so by the time this runs the handles may not exist yet and
+        // wp_localize_script() would silently return false, leaving
+        // jesaei_settings undefined. wp_register_script() is a no-op for an
+        // already-registered handle, so calling it here is safe either way.
+        $this->register_scripts();
+
         $shortcode_attributes = shortcode_atts(array(
             'site_url' => '',
             'rss_url' => '',
@@ -280,14 +285,13 @@ class Main {
 
         // wp_localize_script JSON-encodes these, so the raw (unescaped) URLs
         // are correct here; escaping happens at each markup output point.
-        wp_localize_script('jesaei-localized', 'jesaei_settings', [
+        wp_localize_script('jesaei-scripts', 'jesaei_settings', [
             'site_url' => $site_url,
             'rss_url' => $anchor_rss_url,
             'max_episodes' => (int) $max_episodes,  // Int casting already sanitizes this
             'is_pro_version_active' => JESAEI_IS_PRO_ACTIVE,
             'player_mode' => $player_mode
         ]);
-        wp_enqueue_script('jesaei-localized');
         // enqueue scripts and styles here - this prevents them from enqeueing on irrelevant pages
         wp_enqueue_style('jesaei-styles');
         wp_enqueue_script('jesaei-scripts');

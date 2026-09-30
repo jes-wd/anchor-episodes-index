@@ -155,7 +155,8 @@ Overrides values set on the settings page:
 * Fixed a cascade of PHP warnings, printed into the page on some hosts, when a podcast feed was unreachable, returned a non-200, or contained invalid XML. The player now renders an empty list cleanly.
 * Feed requests now use the WordPress HTTP API with a 10 second timeout, and work on hosts without the cURL extension.
 * Fixed the episode cache not clearing when settings were saved.
-* The settings passed to JavaScript no longer require the empty dist/localized.js file, removing one HTTP request per page and a build step that webpack never produced.
+* Fixed the player not appearing at all on block themes, which includes every default WordPress theme since Twenty Twenty-Two. The settings the player needs were never reaching the page, because block themes render page content before scripts are registered. If your player has been showing as an empty space or a stuck loading animation, this is why.
+* The settings passed to JavaScript are attached to the plugin's own script instead of a separate empty file, removing one HTTP request per page and a build step that webpack never produced.
 * Removed includes/class-anchor-episodes-index.php, an unused legacy copy of the main class that declared a second class with the same name in the same namespace.
 * No changes to the shortcode, its attributes, saved settings, or CSS class names.
 
