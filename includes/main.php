@@ -300,7 +300,15 @@ class Main {
         }
 
         $html = '<div id="jesaei-player-container" class="pro-active-' . (JESAEI_IS_PRO_ACTIVE ? 'yes' : 'no') . ' jesaei-mode-' . esc_attr($player_mode) . ' ' . ($dark_mode ? 'jesaeip-dark-theme' : '') . '">';
-        $html .= '<div id="jesaei-player-loading-animation" class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>';
+
+        // The loading animation exists to cover the Spotify iframe while it
+        // loads. The built-in player is rendered server-side with nothing to
+        // wait for, and the animation is absolutely positioned, so it would
+        // sit on top of the player forever. Kept for the other modes so their
+        // markup is unchanged.
+        if ($player_mode !== 'native') {
+            $html .= '<div id="jesaei-player-loading-animation" class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>';
+        }
 
         $html .= $this->get_player_html($site_url, $anchor_rss_url, $shortcode_attributes, $pro_api, $player_mode);
 
@@ -351,7 +359,11 @@ class Main {
         $image_url = apply_filters('jesaei_modify_episode_image_url', $episode['image_url']);
 
         $html  = '<div class="jesaei-np" id="jesaei-np">';
-        $html .= '<audio id="jesaei-np-audio" preload="none" src="' . esc_url($episode['audio_url']) . '"></audio>';
+        // preload="metadata" fetches only the file header, which is what makes
+        // audio.duration available before playback. With preload="none" the
+        // duration is unknown until the user presses play, so the progress bar
+        // cannot be scrubbed and the arrow keys do nothing until then.
+        $html .= '<audio id="jesaei-np-audio" preload="metadata" src="' . esc_url($episode['audio_url']) . '"></audio>';
 
         $html .= '<div class="jesaei-np__art">';
         $html .= '<img id="jesaei-np-art" src="' . esc_url($image_url) . '" alt="" />';

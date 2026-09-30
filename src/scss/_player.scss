@@ -160,3 +160,42 @@
     outline-color: $color_2-dark;
   }
 }
+
+// Dark styles for the episode index.
+//
+// The index is rendered by this plugin, but until now the only dark rules for
+// it lived in the Pro stylesheet. With the built-in player added, a site whose
+// dark_mode option is set but whose Pro licence has lapsed rendered a dark
+// player above a white list. Values match Pro's so there is no visual change
+// when both are active.
+#jesaei-player-container.jesaeip-dark-theme {
+
+  .styles__episodeFeed___3mOKz {
+    background-color: $background-color_1-dark;
+  }
+
+  .styles__episodeFeedItem___1U6E2 {
+    background-color: $background-color_1-dark;
+    border-bottom: 1px solid $color_5-dark;
+
+    .styles__episodeHeading___29q7v {
+      color: $color_2-dark;
+    }
+
+    .styles__episodeDescription___C3oZg,
+    .podcast-description,
+    p {
+      color: $color_6-dark;
+    }
+
+    .styles__episodeCreated___1zP5p,
+    .styles__episodeDuration___2I0Qb {
+      color: $color_muted-dark;
+    }
+  }
+
+  .podcast-description-show-more-btn {
+    background-color: $color_5-dark;
+    color: $background-color_1-dark;
+  }
+}

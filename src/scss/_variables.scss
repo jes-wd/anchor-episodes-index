@@ -2,8 +2,12 @@ $color_1: #fff;
 $color_2: #292f36;
 $color_3: inherit;
 $color_4: rgba(41, 47, 54, 0.7);
-$color_5: #c9cbcd;
-$color_6: #7f8287;
+// Episode date and duration. Was #c9cbcd, which is 1.63:1 against the white
+// list background - far under the 4.5:1 WCAG AA threshold for small text, and
+// at 11px effectively unreadable. This is a visible change to existing sites.
+$color_5: #6b6e73;
+// Episode description. Was #7f8287, 3.86:1 on white, also under AA.
+$color_6: #5f6368;
 $background-color_1: #f2f2f2;
 $background-color_2: #c8cacd;
 $background-color_3: #EFEFF0;
@@ -17,3 +21,8 @@ $color_6-dark: #c9cbcd;
 $background-color_1-dark: #292f36;
 $background-color_2-dark: #7f8287;
 $background-color_3-dark: #1f242b;
+// Muted text on the dark surface. Pro uses $color_5-dark (#7f8287) for this,
+// which is 3.5:1 against #292f36 and under the 4.5:1 WCAG AA threshold for
+// small text. Pro's stylesheet loads after this one and still wins for Pro
+// users; this only affects the built-in player's dark mode.
+$color_muted-dark: #9aa1a8;
