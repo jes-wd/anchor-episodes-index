@@ -174,3 +174,4 @@ Overrides values set on the settings page:
 * The cached feed is around 23% smaller despite the extra data, because the full episode description was being stored twice.
 * The publish time of each episode is now kept, not just the date.
 * Episode durations are formatted correctly when your host publishes them as a plain number of seconds. They previously displayed as "2486" instead of "41:26"; Transistor, among others, uses seconds.
+* Episodes without their own artwork now fall back to the show artwork, as podcast apps do. On a real feed only 35 of 163 episodes carried their own image and the rest were rendering an empty image tag. Anchor sets artwork on every episode, which is why this never showed up while only Anchor feeds were accepted.

@@ -122,6 +122,22 @@ class Functions {
       ? (string) $feed_xml->channel->image->title
       : (isset($feed_xml->channel->title) ? (string) $feed_xml->channel->title : '');
 
+    // Show artwork, used for episodes that do not carry their own. Most
+    // episodes do not: only 35 of 163 did on a real feed we tested, and the
+    // rest were rendering <img src="">. Anchor sets per-episode artwork on
+    // everything, which is why this never surfaced while the plugin only
+    // accepted Anchor feeds.
+    $channel_itunes = $feed_xml->channel->children('itunes', true);
+    $channel_image  = '';
+
+    if (isset($channel_itunes->image) && isset($channel_itunes->image->attributes()->href)) {
+      $channel_image = (string) $channel_itunes->image->attributes()->href;
+    }
+
+    if ($channel_image === '' && isset($feed_xml->channel->image->url)) {
+      $channel_image = (string) $feed_xml->channel->image->url;
+    }
+
     $feed_array = array();
 
     foreach ($feed_xml->channel->item as $item) {
@@ -130,6 +146,10 @@ class Functions {
       $image_url = isset($itunes_data->image) && isset($itunes_data->image->attributes()->href)
         ? (string) $itunes_data->image->attributes()->href
         : '';
+
+      if ($image_url === '') {
+        $image_url = $channel_image;
+      }
 
       $audio_url = isset($item->enclosure) && isset($item->enclosure->attributes()->url)
         ? (string) $item->enclosure->attributes()->url
@@ -241,7 +261,7 @@ class Functions {
         <div class="styles__episodeFeedItem___1U6E2 ' . ($uses_js_player && $index === 0 ? 'jesaeip-selected-episode' : '') . '">
           <span class="styles__isActiveEpisode___cXlB4"></span>  
           <a class="' . $play_btn_classes . ' podcast-list-link styles__episodeImage___tMifW" ' . $link_attributes . ' aria-label="Play ' . $episode['title'] . '">
-            <img src="' . $image_url . '" alt="' . $episode['title'] . '">
+            ' . ($image_url !== '' ? '<img src="' . $image_url . '" alt="' . $episode['title'] . '">' : '') . '
             <button class="styles__circle___1g-9u styles__white___372tQ styles__playButton___1Ivi4 styles__playButton___1uaGA" aria-label="Play" style="height: 31px; min-height: 31px; width: 31px; min-width: 31px; border-radius: 16px;">
             ' . $play_icon . '
             ' . $pause_icon . '
