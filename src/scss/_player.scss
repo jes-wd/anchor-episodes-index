@@ -199,3 +199,30 @@
     color: $background-color_1-dark;
   }
 }
+
+// Artwork that fails to load.
+//
+// A neutral tile behind every thumbnail means a 403 or a dead URL degrades to
+// a plain square instead of the browser's broken-image box. Invisible when the
+// image loads normally.
+#jesaei-player-container {
+
+  .styles__episodeImage___tMifW,
+  .jesaei-np__art,
+  .styles__episodeImage___xiMiX {
+    background-color: $background-color_2;
+  }
+
+  img.jesaei-img-failed {
+    visibility: hidden;
+  }
+}
+
+#jesaei-player-container.jesaeip-dark-theme {
+
+  .styles__episodeImage___tMifW,
+  .jesaei-np__art,
+  .styles__episodeImage___xiMiX {
+    background-color: $background-color_2-dark;
+  }
+}

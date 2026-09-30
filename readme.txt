@@ -175,6 +175,7 @@ Overrides values set on the settings page:
 * The publish time of each episode is now kept, not just the date.
 * Accessibility: episode dates and durations in the index were #c9cbcd on white, a contrast ratio of 1.63:1 at 11px, which is effectively unreadable. Dates, durations and descriptions now meet the WCAG AA threshold. This slightly changes how the index looks.
 * The built-in player no longer leaves the loading animation sitting on top of it.
+* Episode artwork that fails to load now shows a plain tile instead of the browser's broken-image box. Older Anchor-hosted shows in particular have artwork URLs that no longer resolve.
 * The built-in player loads audio metadata, so the progress bar can be scrubbed and the arrow keys work before you press play.
 * Dark mode now styles the episode index as well as the player. Sites whose dark mode setting was on but whose Pro licence had lapsed were showing a dark player above a white list.
 * Episode durations are formatted correctly when your host publishes them as a plain number of seconds. They previously displayed as "2486" instead of "41:26"; Transistor, among others, uses seconds.
