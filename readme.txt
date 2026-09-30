@@ -2,9 +2,9 @@
 Contributors: jeswd
 Tags: anchor.fm, podcast, embed, spotify
 Requires at least: 4.8
-Tested up to: 6.6
+Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 2.1.14
+Stable tag: 2.1.15
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -138,3 +138,6 @@ Overrides values set on the settings page:
 
 = 2.1.14 =
 * Test with WP 6.9
+
+= 2.1.15 =
+* Update readme
