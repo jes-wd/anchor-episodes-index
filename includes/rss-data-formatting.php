@@ -81,6 +81,23 @@ class RSS_Data_Formatting {
         return $description_excerpt . $description_excerpt_html;
     }
 
+    /**
+     * Raw publish time as a Unix timestamp, or 0.
+     *
+     * get_published_date() returns a display string with no time component.
+     */
+    public function get_published_timestamp($date): int {
+        $date = trim((string) $date);
+
+        if ($date === '') {
+            return 0;
+        }
+
+        $timestamp = strtotime($date);
+
+        return $timestamp ? (int) $timestamp : 0;
+    }
+
     public function get_published_date($date): string {
         $date = (string) $date;
 

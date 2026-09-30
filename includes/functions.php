@@ -135,14 +135,19 @@ class Functions {
         ? (string) $item->enclosure->attributes()->url
         : '';
 
-      $feed_array[] = array(
+      $episode_data = array(
         "title" => esc_html((string)$item->title),
         "title_excerpt" => esc_html((string)$this->RSS_Data_Formatting->get_title_excerpt($item->title)),
         "iframe_url" => esc_url((string)$this->RSS_Data_Formatting->get_iframe_url($item->link)),
         "audio_url" => esc_url($audio_url),
-        "description" => (string) $this->RSS_Data_Formatting->sanitize_description($item->description),
+        // NOTE: the full sanitised description is not stored separately. It is
+        // already embedded in description_excerpt's data-full-description
+        // attribute, and storing it twice was 37% of the cached feed.
         "description_excerpt" => wp_kses_post((string)$this->RSS_Data_Formatting->get_description_excerpt($item->description)),
         "published_date" => esc_html((string)$this->RSS_Data_Formatting->get_published_date($item->pubDate)),
+        // published_date is formatted for display and has lost the time, which
+        // matters for ordering shows that publish more than once a day.
+        "published_timestamp" => $this->RSS_Data_Formatting->get_published_timestamp($item->pubDate),
         "guid" => esc_html((string)$item->guid),
         "image_url" => esc_url($image_url),
         "subtitle" => esc_html((string)$itunes_data->subtitle),
@@ -152,6 +157,29 @@ class Functions {
         "site_url" => esc_url((string)$item->link),
         "author" => esc_html($channel_title)
       );
+
+      // Podcasting 2.0 tags: transcripts, chapters and per-episode credits.
+      // URLs are kept raw here because they are fetched, not printed; the
+      // renderer escapes them at output.
+      $transcripts = Podcast_Namespace::get_transcripts($item);
+      $numbering   = Podcast_Namespace::get_numbering($item);
+
+      $episode_data['transcripts']        = $transcripts;
+      $episode_data['primary_transcript'] = Podcast_Namespace::pick_transcript($transcripts);
+      $episode_data['chapters']           = Podcast_Namespace::get_chapters($item);
+      $episode_data['persons']            = Podcast_Namespace::get_persons($item);
+      $episode_data['season']             = $numbering['season'];
+      $episode_data['episode_number']     = $numbering['episode_number'];
+      $episode_data['episode_type']       = $numbering['episode_type'];
+      $episode_data['explicit']           = $numbering['explicit'];
+
+      /**
+       * One parsed episode, before it is cached.
+       *
+       * @param array             $episode_data
+       * @param \SimpleXMLElement $item Raw feed item, for anything not parsed here.
+       */
+      $feed_array[] = apply_filters('jesaei_episode_data', $episode_data, $item);
     }
 
     return $feed_array;

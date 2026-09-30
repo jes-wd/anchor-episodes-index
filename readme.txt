@@ -4,7 +4,7 @@ Tags: anchor.fm, podcast, embed, spotify
 Requires at least: 4.8
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 2.3.0
+Stable tag: 2.4.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -167,3 +167,9 @@ Overrides values set on the settings page:
 * Existing sites are unchanged: if you are using the Spotify embed today, you keep it, and you can switch whenever you like from the settings page.
 * Feed URLs containing a query string now work. They were previously HTML-escaped before being requested, which broke the request.
 * The JavaScript bundle is 62% smaller (10.1KB to 3.9KB) and no longer uses eval(), so it works under a strict Content-Security-Policy.
+
+= 2.4.0 =
+* Reads the Podcasting 2.0 tags your podcast host already publishes: transcripts, chapter markers, per-episode credits, and season and episode numbers.
+* Episode data is available to other plugins and themes through the new `jesaei_episode_data` filter.
+* The cached feed is around 23% smaller despite the extra data, because the full episode description was being stored twice.
+* The publish time of each episode is now kept, not just the date.

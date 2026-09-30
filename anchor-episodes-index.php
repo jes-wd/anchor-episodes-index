@@ -3,7 +3,7 @@
 /**
  * Plugin Name: Anchor Episodes Index (Spotify for Podcasters)
  * Description: A lightweight plugin that outputs a podcast player with a full episode index on your site, from any podcast host's RSS feed. Add your feed URL on the settings page, grab the shortcode, and you're good to go.
- * Version: 2.3.0
+ * Version: 2.4.0
  * Author: jesweb.dev
  * Author URI: https://jesweb.dev
  * License: GPLv2 or later
@@ -14,7 +14,7 @@ if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
 
-define('JESAEI_VERSION', '2.3.0');
+define('JESAEI_VERSION', '2.4.0');
 define('JESAEI_PLUGIN_PATH', plugin_dir_path(__FILE__));
 define('JESAEI_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('JESAEI_PLUGIN_BASENAME', plugin_basename(__FILE__));
@@ -32,16 +32,19 @@ define('JESAEI_PLUGIN_BASENAME', plugin_basename(__FILE__));
  *   filter  jesaei_modify_episode_image_url ( $image_url )
  *   action  jesaei_add_settings_fields      ( )   [+ legacy jesaeip_add_settings_fields]
  *   class   \Anchor_Episodes_Index\Functions::set_rss_url() / ::get_rss_feed()
+ *   filter  jesaei_episode_data             ( $data, $item )
+ *   class   \Anchor_Episodes_Index\Podcast_Namespace (Podcasting 2.0 tags)
  *
  * NOTE: Pro loads BEFORE this plugin (WordPress orders active_plugins
  * alphabetically and "anchor-episodes-index-pro/" sorts before
  * "anchor-episodes-index/"), so this constant is not available at Pro's own
  * file-load time. That is why the handshake happens on `plugins_loaded`.
  */
-define('JESAEI_PRO_API', 2);
+define('JESAEI_PRO_API', 3);
 
 define('JESAEI_IS_PRO_ACTIVE', class_exists('Anchor_Episodes_Index\Pro\Main'));
 
+include(JESAEI_PLUGIN_PATH . 'includes/podcast-namespace.php');
 include(JESAEI_PLUGIN_PATH . 'includes/rss-data-formatting.php');
 include(JESAEI_PLUGIN_PATH . 'includes/functions.php');
 include(JESAEI_PLUGIN_PATH . 'includes/main.php');
