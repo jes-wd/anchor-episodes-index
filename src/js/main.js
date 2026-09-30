@@ -1,11 +1,20 @@
-import {
-  setPlayerIframeHeight,
-} from './functions'
+import { setPlayerIframeHeight } from './functions'
+import { initNativePlayer } from './player'
 
 document.addEventListener('DOMContentLoaded', () => {
-  const isProVersionActive = jesaei_settings.is_pro_version_active
+  const settings = window.jesaei_settings || {}
 
-  if (!isProVersionActive) {
+  // player_mode arrived in 2.3.0; fall back to the old behaviour if an older
+  // PHP side is somehow in play.
+  const mode =
+    settings.player_mode || (settings.is_pro_version_active ? 'pro' : 'iframe')
+
+  if (mode === 'native') {
+    initNativePlayer()
+    return
+  }
+
+  if (mode === 'iframe') {
     window.addEventListener('resize', setPlayerIframeHeight)
     setPlayerIframeHeight()
   }

@@ -157,11 +157,23 @@ class Functions {
     return $feed_array;
   }
 
-  public function get_episode_list_html(int $limit, ?string $rss_url = null) {
+  /**
+   * @param string|null $player_mode 'pro', 'native' or 'iframe'. Null keeps the
+   *                                 pre-2.3 behaviour for any external caller.
+   */
+  public function get_episode_list_html(int $limit, ?string $rss_url = null, ?string $player_mode = null) {
     $this->options['anchor_rss_url'] = $rss_url;
     require('svgs.php');
 
     $episodes = $this->get_rss_feed();
+
+    if ($player_mode === null) {
+      $player_mode = JESAEI_IS_PRO_ACTIVE ? 'pro' : 'iframe';
+    }
+
+    // Both the Pro player and the built-in player are driven from data
+    // attributes; only the legacy Spotify iframe uses a link target.
+    $uses_js_player = ($player_mode === 'pro' || $player_mode === 'native');
 
     $html = '<div id="jesaei-podcast-list-container" class="jesaei-podcast-list-container styles__episodeFeed___3mOKz">';
     $index = 0;
@@ -174,7 +186,7 @@ class Functions {
       $image_url = apply_filters('jesaei_modify_episode_image_url', $episode['image_url']);
       $link_attributes = '';
 
-      if (JESAEI_IS_PRO_ACTIVE) {
+      if ($uses_js_player) {
         $link_attributes .= 'data-audio-url="' . $episode['audio_url'] . '"';
         $link_attributes .= 'data-episode-title="' . $episode['title'] . '"';
         $link_attributes .= 'data-episode-image="' . $image_url . '"';
@@ -186,17 +198,28 @@ class Functions {
         $link_attributes .= 'href="' . $episode['iframe_url'] . '" target="jesaei_podcast_iframe"';
       }
 
+      // The built-in player binds to its own class so it can never
+      // double-bind with Pro's script, which uses the jesaeip- prefix.
+      $play_btn_classes = 'jesaeip-episode-play-btn'
+        . ($player_mode === 'native' ? ' jesaei-episode-play-btn' : '');
+
+      // In native mode there is no iframe to target, so the title becomes a
+      // play trigger rather than a link to nowhere.
+      $title_link = $player_mode === 'native'
+        ? '<a class="podcast-list-link jesaei-episode-play-btn" href="#" ' . $link_attributes . ' aria-label="' . $episode['title'] . '">'
+        : '<a class="podcast-list-link" href="' . $episode['iframe_url'] . '" target="jesaei_podcast_iframe" data-audio-url="' . $episode['audio_url'] . '" aria-label="' . $episode['title'] . '">';
+
       $html .= '
-        <div class="styles__episodeFeedItem___1U6E2 ' . (JESAEI_IS_PRO_ACTIVE ? ($index === 0 ? 'jesaeip-selected-episode' : '') : '') . '">
+        <div class="styles__episodeFeedItem___1U6E2 ' . ($uses_js_player && $index === 0 ? 'jesaeip-selected-episode' : '') . '">
           <span class="styles__isActiveEpisode___cXlB4"></span>  
-          <a class="jesaeip-episode-play-btn podcast-list-link styles__episodeImage___tMifW" ' . $link_attributes . ' aria-label="Play ' . $episode['title'] . '">
+          <a class="' . $play_btn_classes . ' podcast-list-link styles__episodeImage___tMifW" ' . $link_attributes . ' aria-label="Play ' . $episode['title'] . '">
             <img src="' . $image_url . '" alt="' . $episode['title'] . '">
             <button class="styles__circle___1g-9u styles__white___372tQ styles__playButton___1Ivi4 styles__playButton___1uaGA" aria-label="Play" style="height: 31px; min-height: 31px; width: 31px; min-width: 31px; border-radius: 16px;">
             ' . $play_icon . '
             ' . $pause_icon . '
             </button>
           </a>
-          <a class="podcast-list-link" href="' . $episode['iframe_url'] . '" target="jesaei_podcast_iframe" data-audio-url="' . $episode['audio_url'] . '" aria-label="' . $episode['title'] . '">
+          ' . $title_link . '
             <div class="styles__episodeHeading___29q7v">
               <div>
                 <div>' . $episode['title_excerpt'] . '</div>

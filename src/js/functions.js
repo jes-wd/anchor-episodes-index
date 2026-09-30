@@ -91,10 +91,14 @@ export const setPlayerIframeHeight = () => {
     'jesaei-anchor-podcast-iframe-container'
   )
   const anchorIframe = document.getElementById('jesaei-anchor-podcast-iframe')
-  const anchorIframeWidth = anchorIframeContainer.offsetWidth
   const loadingAnimation = document.getElementById(
     'jesaei-player-loading-animation'
   )
+
+  // There is no iframe when the Spotify Show URL is blank.
+  if (!anchorIframeContainer || !anchorIframe) return
+
+  const anchorIframeWidth = anchorIframeContainer.offsetWidth
 
   if (anchorIframeWidth > 768) {
     loadingAnimation.style.top = '40px'

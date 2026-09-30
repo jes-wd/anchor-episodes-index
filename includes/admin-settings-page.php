@@ -45,14 +45,14 @@ class JES_Anchor_Settings_Page {
 		);
 		add_settings_field(
 			'site_url',
-			__('Anchor Site URL', 'text_domain'),
+			__('Spotify Show URL (optional)', 'text_domain'),
 			array($this, 'render_site_url_field'),
 			'jes_anchor_settings',
 			'jes_anchor_settings_section'
 		);
 		add_settings_field(
 			'anchor_rss_url',
-			__('Anchor RSS URL', 'text_domain'),
+			__('Podcast RSS Feed URL', 'text_domain'),
 			array($this, 'render_anchor_rss_url_field'),
 			'jes_anchor_settings',
 			'jes_anchor_settings_section'
@@ -61,6 +61,14 @@ class JES_Anchor_Settings_Page {
 			'max_episodes',
 			__('Total Episodes To Display', 'text_domain'),
 			array($this, 'render_max_episodes_field'),
+			'jes_anchor_settings',
+			'jes_anchor_settings_section'
+		);
+
+		add_settings_field(
+			'player_mode',
+			__('Player', 'text_domain'),
+			array($this, 'render_player_mode_field'),
 			'jes_anchor_settings',
 			'jes_anchor_settings_section'
 		);
@@ -117,7 +125,7 @@ class JES_Anchor_Settings_Page {
 
 		// Field output.
 		echo '<input type="url" name="jes_anchor_settings[site_url]" class="regular-text site_url_field" placeholder="' . esc_attr__('', 'text_domain') . '" value="' . esc_attr($value) . '">';
-		echo '<p class="description">' . __('Looks like https://anchor.fm/{YOUR SITE NAME} or https://podcasters.spotify.com/pod/show/{YOUR SITE NAME} (make sure there is no "/" at the end)', 'text_domain') . '</p>';
+		echo '<p class="description">' . __('Only needed if you want the Spotify embed instead of the built-in player. Looks like https://creators.spotify.com/pod/show/{YOUR SHOW} (no trailing "/"). Leave blank for every other podcast host.', 'text_domain') . '</p>';
 	}
 
 	public function render_anchor_rss_url_field() {
@@ -129,8 +137,28 @@ class JES_Anchor_Settings_Page {
 		$value = isset($options['anchor_rss_url']) ? $options['anchor_rss_url'] : '';
 
 		// Field output.
-		echo '<input type="url" name="jes_anchor_settings[anchor_rss_url]" class="regular-text anchor_rss_url_field" placeholder="' . esc_attr__('', 'text_domain') . '" value="' . esc_attr($value) . '">';
-		echo '<p class="description">' . __('Found in your Anchor settings. Looks like https://anchor.fm/s/{YOUR SITE KEY}/podcast/rss (make sure there is no "/" at the end)', 'text_domain') . '</p>';
+		echo '<input type="url" name="jes_anchor_settings[anchor_rss_url]" class="regular-text anchor_rss_url_field" placeholder="https://feeds.example.com/your-podcast" value="' . esc_attr($value) . '">';
+		echo '<p class="description">' . __('Your podcast RSS feed, from any host: Spotify for Creators, Buzzsprout, Transistor, Captivate, Libsyn, Podbean, RSS.com, Simplecast and others all work.', 'text_domain') . '</p>';
+	}
+
+	public function render_player_mode_field() {
+		$options   = get_option('jes_anchor_settings');
+		$value     = isset($options['player_mode']) ? $options['player_mode'] : '';
+		$site_url  = isset($options['site_url']) ? $options['site_url'] : '';
+		$has_embed = !empty($site_url)
+			&& function_exists('Anchor_Episodes_Index\\jesaei_is_spotify_url')
+			&& \Anchor_Episodes_Index\jesaei_is_spotify_url($site_url);
+
+		echo '<select name="jes_anchor_settings[player_mode]" class="player_mode_field">';
+		echo '<option value="native"' . selected($value, 'native', false) . '>' . esc_html__('Built-in player (works with any host)', 'text_domain') . '</option>';
+		echo '<option value="iframe"' . selected($value, 'iframe', false) . ($has_embed ? '' : ' disabled') . '>' . esc_html__('Spotify embed (needs a Spotify Show URL above)', 'text_domain') . '</option>';
+		echo '</select>';
+
+		if ($has_embed) {
+			echo '<p class="description">' . esc_html__('The Spotify embed loads Spotify\'s own player in an iframe. The built-in player streams the same audio directly from your feed, loads faster and sets no third-party cookies.', 'text_domain') . '</p>';
+		} else {
+			echo '<p class="description">' . esc_html__('The Spotify embed is only available when the Spotify Show URL above is filled in.', 'text_domain') . '</p>';
+		}
 	}
 
 	public function render_max_episodes_field() {

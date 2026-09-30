@@ -4,11 +4,11 @@ Tags: anchor.fm, podcast, embed, spotify
 Requires at least: 4.8
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 2.2.0
+Stable tag: 2.3.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-A lightweight plugin that allows you to output an anchor.fm podcast player on your site that includes an episode index. Just add two URL's on the settings page, grab the shortcode, and you're good to go!
+Show your podcast with a full episode index on your own site, from any host's RSS feed. Add your feed URL, grab the shortcode, done.
 
 == Announcements ==
 
@@ -16,9 +16,13 @@ A lightweight plugin that allows you to output an anchor.fm podcast player on yo
 
 == Description ==
 
-This plugin appends an episode index to the anchor.fm podcast player. Currently, the only available embed for the anchor.fm player is for a single episode. 
-This plugin allows you to add your entire episode index, just the same as you have on your anchor.fm site. 
-Simply input your site and RSS URL's on the settings page and add the shortcode to any page or post. 
+This plugin puts your whole podcast on your own site: a player plus a complete, scrollable episode index, built from your podcast's RSS feed.
+
+It works with any podcast host that publishes a standard RSS feed, including Spotify for Creators (formerly Anchor), Buzzsprout, Transistor, Captivate, Libsyn, Podbean, RSS.com, Spreaker and Simplecast.
+
+Paste your feed URL on the settings page and add the shortcode to any page or post.
+
+If your show is hosted on Spotify for Creators you can optionally use Spotify's own embedded player instead of the built-in one, by filling in the Spotify Show URL field.
 
 Email me [here](mailto:jesse@jesweb.dev) for suggestions and feedback.
 
@@ -26,7 +30,9 @@ Email me [here](mailto:jesse@jesweb.dev) for suggestions and feedback.
 
 Firstly, install and activate Anchor Episodes Index (this plugin).
 
-Once activated, go to the settings and fill out the Anchor Site URL and Anchor RSS URL fields (be sure to add the URL's without a "/" at the end, otherwise it will not work).
+Once activated, go to the settings and fill out the Podcast RSS Feed URL field. That is the only required setting.
+
+The Spotify Show URL field is optional and only applies to shows hosted on Spotify for Creators; fill it in if you would rather use Spotify's embedded player than the built-in one.
 
 Then copy the shortcode you'll see on the settings page and paste it in any page or post.
 
@@ -152,3 +158,12 @@ Overrides values set on the settings page:
 * The settings passed to JavaScript no longer require the empty dist/localized.js file, removing one HTTP request per page and a build step that webpack never produced.
 * Removed includes/class-anchor-episodes-index.php, an unused legacy copy of the main class that declared a second class with the same name in the same namespace.
 * No changes to the shortcode, its attributes, saved settings, or CSS class names.
+
+= 2.3.0 =
+* Works with any podcast host. The plugin previously accepted feeds only from anchor.fm and Spotify; it now accepts any standard podcast RSS feed, including Buzzsprout, Transistor, Captivate, Libsyn, Podbean, RSS.com, Spreaker and Simplecast.
+* Added a built-in player that streams straight from your feed. It loads faster than the Spotify embed and sets no third-party cookies.
+* The Spotify Show URL setting is now optional, and only needed if you want Spotify's embedded player.
+* New "Player" setting to choose between the built-in player and the Spotify embed.
+* Existing sites are unchanged: if you are using the Spotify embed today, you keep it, and you can switch whenever you like from the settings page.
+* Feed URLs containing a query string now work. They were previously HTML-escaped before being requested, which broke the request.
+* The JavaScript bundle is 62% smaller (10.1KB to 3.9KB) and no longer uses eval(), so it works under a strict Content-Security-Policy.

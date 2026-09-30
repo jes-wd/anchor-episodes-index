@@ -1,0 +1,162 @@
+// Built-in player (player_mode: native).
+// Rendered instead of the Spotify iframe, so it has to stand on its own
+// visually while matching the episode list it sits above.
+
+#jesaei-player-container .jesaei-np {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  line-height: 1.4;
+  box-sizing: border-box;
+  color: $color_2;
+  background-color: $background-color_3;
+
+  * {
+    box-sizing: border-box;
+  }
+
+  .jesaei-np__art {
+    flex: 0 0 auto;
+
+    img {
+      display: block;
+      width: 72px;
+      height: 72px;
+      border-radius: 8px;
+      object-fit: cover;
+    }
+  }
+
+  .jesaei-np__body {
+    flex: 1 1 auto;
+    min-width: 0; // lets the title ellipsis instead of stretching the row
+  }
+
+  .jesaei-np__title {
+    font-size: 15px;
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .jesaei-np__meta {
+    margin-top: 2px;
+    font-size: 12px;
+    color: $color_4;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .jesaei-np__controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .jesaei-np__play {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    cursor: pointer;
+    color: $color_1;
+    background-color: $color_2;
+
+    svg {
+      fill: currentColor;
+    }
+
+    &:focus-visible {
+      outline: 2px solid currentColor;
+      outline-offset: 2px;
+    }
+
+    .jesaei-np__icon-pause {
+      display: none;
+    }
+  }
+
+  .jesaei-np__time {
+    flex: 0 0 auto;
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+    color: $color_4;
+  }
+
+  .jesaei-np__progress {
+    flex: 1 1 auto;
+    height: 6px;
+    border-radius: 3px;
+    cursor: pointer;
+    background-color: $background-color_2;
+
+    &:focus-visible {
+      outline: 2px solid $color_2;
+      outline-offset: 3px;
+    }
+  }
+
+  .jesaei-np__bar {
+    width: 0;
+    height: 100%;
+    border-radius: 3px;
+    background-color: $color_2;
+  }
+
+  &.is-playing .jesaei-np__play {
+    .jesaei-np__icon-play {
+      display: none;
+    }
+
+    .jesaei-np__icon-pause {
+      display: block;
+    }
+  }
+
+  @media (max-width: 480px) {
+    padding: 12px;
+    gap: 12px;
+
+    .jesaei-np__art img {
+      width: 56px;
+      height: 56px;
+    }
+  }
+}
+
+// Dark theme, matching the existing .jesaeip-dark-theme switch.
+#jesaei-player-container.jesaeip-dark-theme .jesaei-np {
+  color: $color_2-dark;
+  background-color: $background-color_3-dark;
+
+  .jesaei-np__meta,
+  .jesaei-np__time {
+    color: $color_4-dark;
+  }
+
+  .jesaei-np__play {
+    color: $color_1-dark;
+    background-color: $color_2-dark;
+  }
+
+  .jesaei-np__progress {
+    background-color: $background-color_2-dark;
+  }
+
+  .jesaei-np__bar {
+    background-color: $color_2-dark;
+  }
+
+  .jesaei-np__progress:focus-visible {
+    outline-color: $color_2-dark;
+  }
+}

@@ -39,6 +39,7 @@ class Main {
         add_action('upgrader_post_install', [$this, 'plugin_updated'], 10, 1);
         add_action('admin_notices', [$this, 'admin_notice_pro_version']);
         add_action('admin_notices', [$this, 'admin_notice_outdated_pro']);
+        add_action('admin_init', [$this, 'maybe_migrate']);
         add_action('wp_ajax_jesaei_dismiss_notice', [$this, 'dismiss_notice']);
     }
 
@@ -117,21 +118,138 @@ class Main {
         add_shortcode('anchor_episodes', [$this, 'shortcode']);
     }
 
-    // Function to validate allowed domains and sanitize URL
+    /**
+     * Validate a user-supplied URL and return it in a form safe to fetch.
+     *
+     * This used to accept only anchor.fm and Spotify hosts, which locked the
+     * plugin to one podcast host. Any http(s) URL is now accepted; the feed
+     * itself is fetched with wp_safe_remote_get(), which refuses private and
+     * internal addresses.
+     *
+     * Returns a RAW url (esc_url_raw), not an HTML-escaped one. The previous
+     * esc_url() turned "&" into "&#038;", which is right for markup and wrong
+     * for an HTTP request. It never mattered while only Spotify feed URLs were
+     * allowed, because those carry no query string. Plenty of other hosts do.
+     * Callers must escape at the point of output.
+     */
     public function validate_and_sanitize_url($url) {
-        $parsed_url = parse_url($url);
+        $url = trim((string) $url);
+
+        if ($url === '') {
+            return '';
+        }
+
+        $parsed_url = wp_parse_url($url);
 
         if (!is_array($parsed_url) || empty($parsed_url['host'])) {
             return '';
         }
 
-        $allowed_domains = ['podcasters.spotify.com', 'anchor.fm', 'creators.spotify.com'];
+        $scheme = isset($parsed_url['scheme']) ? strtolower($parsed_url['scheme']) : '';
 
-        if (in_array($parsed_url['host'], $allowed_domains)) {
-            return esc_url(sanitize_url($url));
+        if ($scheme !== 'http' && $scheme !== 'https') {
+            return '';
         }
 
-        return '';
+        // Credentials in the URL are never wanted here and would be leaked
+        // into markup and into the JS settings object.
+        if (isset($parsed_url['user']) || isset($parsed_url['pass'])) {
+            return '';
+        }
+
+        $clean = esc_url_raw($url, array('http', 'https'));
+
+        return is_string($clean) ? $clean : '';
+    }
+
+    /**
+     * Is this URL on one of Spotify's podcast hosts?
+     *
+     * Only used to decide whether the legacy Spotify iframe is available.
+     */
+    public function is_spotify_url($url) {
+        $host = wp_parse_url((string) $url, PHP_URL_HOST);
+
+        if (!is_string($host) || $host === '') {
+            return false;
+        }
+
+        $host = strtolower($host);
+        $spotify_hosts = array('anchor.fm', 'podcasters.spotify.com', 'creators.spotify.com', 'open.spotify.com');
+
+        foreach ($spotify_hosts as $spotify_host) {
+            if ($host === $spotify_host || substr($host, -(strlen($spotify_host) + 1)) === '.' . $spotify_host) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Which player to render: 'pro', 'native' or 'iframe'.
+     *
+     * Existing installs are pinned to 'iframe' by maybe_migrate() so their
+     * pages do not change appearance on update. Fresh installs, and anyone
+     * whose feed is not on Spotify, get the built-in player.
+     */
+    public function get_player_mode($site_url, $rss_url) {
+        if ($this->get_pro_api_version() >= 1 || $this->Pro_Main) {
+            return 'pro';
+        }
+
+        $iframe_available = ($site_url !== '' && $this->is_spotify_url($site_url));
+
+        $options = get_option('jes_anchor_settings');
+        $stored  = is_array($options) && isset($options['player_mode']) ? $options['player_mode'] : '';
+
+        if ($stored === 'native') {
+            return 'native';
+        }
+
+        if ($stored === 'iframe') {
+            return $iframe_available ? 'iframe' : 'native';
+        }
+
+        // Nothing stored. If maybe_migrate() has already run then this is a
+        // fresh install, and fresh installs get the built-in player: it loads
+        // faster and sets no third-party cookies. If migration has NOT run yet
+        // (a front-end hit before any admin page view) fall back to the old
+        // behaviour so the page does not change under an existing user.
+        if (get_option('jesaei_version') !== false) {
+            return 'native';
+        }
+
+        return $iframe_available ? 'iframe' : 'native';
+    }
+
+    /**
+     * One-time migration for installs that predate the built-in player.
+     *
+     * A site already showing the Spotify iframe keeps showing it. Only sites
+     * that never had settings, or that point at a non-Spotify feed, get the
+     * new default. Runs in the admin only, so no front-end writes.
+     */
+    public function maybe_migrate() {
+        if (get_option('jesaei_version') === JESAEI_VERSION) {
+            return;
+        }
+
+        if (get_option('jesaei_version') === false) {
+            $options = get_option('jes_anchor_settings');
+
+            if (is_array($options) && !isset($options['player_mode'])) {
+                // Only a Spotify show URL could ever have produced an iframe;
+                // anything else was already rendering nothing useful.
+                $options['player_mode'] =
+                    (!empty($options['site_url']) && $this->is_spotify_url($options['site_url']))
+                        ? 'iframe'
+                        : 'native';
+                update_option('jes_anchor_settings', $options);
+            }
+        }
+
+        update_option('jesaei_version', JESAEI_VERSION);
     }
 
     // shortcode main function
@@ -157,14 +275,17 @@ class Main {
 
         $dark_mode = isset($options['dark_mode']) ? $options['dark_mode'] : false;
 
-        $pro_api = $this->get_pro_api_version();
+        $pro_api     = $this->get_pro_api_version();
+        $player_mode = $this->get_player_mode($site_url, $anchor_rss_url);
 
-        // Make sure to escape data before outputting it to JS
+        // wp_localize_script JSON-encodes these, so the raw (unescaped) URLs
+        // are correct here; escaping happens at each markup output point.
         wp_localize_script('jesaei-localized', 'jesaei_settings', [
-            'site_url' => $site_url,  // Already escaped using esc_url
-            'rss_url' => $anchor_rss_url,  // Already escaped using esc_url
+            'site_url' => $site_url,
+            'rss_url' => $anchor_rss_url,
             'max_episodes' => (int) $max_episodes,  // Int casting already sanitizes this
-            'is_pro_version_active' => JESAEI_IS_PRO_ACTIVE
+            'is_pro_version_active' => JESAEI_IS_PRO_ACTIVE,
+            'player_mode' => $player_mode
         ]);
         wp_enqueue_script('jesaei-localized');
         // enqueue scripts and styles here - this prevents them from enqeueing on irrelevant pages
@@ -178,12 +299,12 @@ class Main {
             $this->Pro_Main->enqueue_scripts();
         }
 
-        $html = '<div id="jesaei-player-container" class="pro-active-' . (JESAEI_IS_PRO_ACTIVE ? 'yes' : 'no') . ' ' . ($dark_mode ? 'jesaeip-dark-theme' : '') . '">';
+        $html = '<div id="jesaei-player-container" class="pro-active-' . (JESAEI_IS_PRO_ACTIVE ? 'yes' : 'no') . ' jesaei-mode-' . esc_attr($player_mode) . ' ' . ($dark_mode ? 'jesaeip-dark-theme' : '') . '">';
         $html .= '<div id="jesaei-player-loading-animation" class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>';
 
-        $html .= $this->get_player_html($site_url, $anchor_rss_url, $shortcode_attributes, $pro_api);
+        $html .= $this->get_player_html($site_url, $anchor_rss_url, $shortcode_attributes, $pro_api, $player_mode);
 
-        $html .= $this->Functions->get_episode_list_html((int) $max_episodes, $anchor_rss_url);
+        $html .= $this->Functions->get_episode_list_html((int) $max_episodes, $anchor_rss_url, $player_mode);
 
         return $html;
     }
@@ -196,8 +317,10 @@ class Main {
      *   2. Legacy Pro, via a direct guarded call (old builds predate the filter).
      *   3. The built-in Spotify iframe.
      */
-    private function get_player_html($site_url, $rss_url, $atts, $pro_api) {
-        $default_html = $this->get_iframe_player_html($site_url);
+    private function get_player_html($site_url, $rss_url, $atts, $pro_api, $player_mode = 'iframe') {
+        $default_html = $player_mode === 'native'
+            ? $this->get_native_player_html($rss_url)
+            : $this->get_iframe_player_html($site_url);
 
         if ($pro_api >= 1) {
             return (string) apply_filters('jesaei_player_html', $default_html, $rss_url, $atts);
@@ -210,13 +333,64 @@ class Main {
         return $default_html;
     }
 
+    /**
+     * The built-in player: a plain HTML5 audio element driven from the feed's
+     * own enclosure URLs, so it works with any podcast host.
+     *
+     * Seeded with the most recent episode; the episode list swaps the source.
+     */
+    private function get_native_player_html($rss_url) {
+        $this->Functions->set_rss_url($rss_url);
+        $episodes = $this->Functions->get_rss_feed();
+
+        if (empty($episodes)) {
+            return '';
+        }
+
+        $episode   = $episodes[0];
+        $image_url = apply_filters('jesaei_modify_episode_image_url', $episode['image_url']);
+
+        $html  = '<div class="jesaei-np" id="jesaei-np">';
+        $html .= '<audio id="jesaei-np-audio" preload="none" src="' . esc_url($episode['audio_url']) . '"></audio>';
+
+        $html .= '<div class="jesaei-np__art">';
+        $html .= '<img id="jesaei-np-art" src="' . esc_url($image_url) . '" alt="" />';
+        $html .= '</div>';
+
+        $html .= '<div class="jesaei-np__body">';
+        $html .= '<div class="jesaei-np__title" id="jesaei-np-title">' . esc_html($episode['title']) . '</div>';
+        $html .= '<div class="jesaei-np__meta">';
+        $html .= '<span id="jesaei-np-author">' . esc_html($episode['author']) . '</span>';
+        $html .= '<span class="jesaei-np__sep"> &middot; </span>';
+        $html .= '<span id="jesaei-np-date">' . esc_html($episode['published_date']) . '</span>';
+        $html .= '</div>';
+
+        $html .= '<div class="jesaei-np__controls">';
+        $html .= '<button type="button" class="jesaei-np__play" id="jesaei-np-play" aria-label="' . esc_attr__('Play', 'anchor-episodes-index') . '">';
+        $html .= '<svg class="jesaei-np__icon-play" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path d="M7.05 3.606l13.49 7.788a.7.7 0 010 1.212L7.05 20.394A.7.7 0 016 19.788V4.212a.7.7 0 011.05-.606z"/></svg>';
+        $html .= '<svg class="jesaei-np__icon-pause" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path d="M5.7 3a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7H5.7zm10 0a.7.7 0 00-.7.7v16.6a.7.7 0 00.7.7h2.6a.7.7 0 00.7-.7V3.7a.7.7 0 00-.7-.7h-2.6z"/></svg>';
+        $html .= '</button>';
+        $html .= '<span class="jesaei-np__time" id="jesaei-np-elapsed">00:00</span>';
+        $html .= '<div class="jesaei-np__progress" id="jesaei-np-progress" role="slider" tabindex="0"'
+              . ' aria-label="' . esc_attr__('Seek', 'anchor-episodes-index') . '"'
+              . ' aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">';
+        $html .= '<div class="jesaei-np__bar" id="jesaei-np-bar"></div>';
+        $html .= '</div>';
+        $html .= '<span class="jesaei-np__time" id="jesaei-np-duration">' . esc_html($episode['duration']) . '</span>';
+        $html .= '</div>';
+
+        $html .= '</div></div>';
+
+        return $html;
+    }
+
     private function get_iframe_player_html($site_url) {
         if ($site_url === '') {
             return '';
         }
 
         $html  = '<div id="jesaei-anchor-podcast-iframe-container">';
-        $html .= '<iframe id="jesaei-anchor-podcast-iframe" src="' . $site_url . '/embed" style="width: 100%;" frameborder="0" scrolling="no" name="jesaei_podcast_iframe"></iframe>';
+        $html .= '<iframe id="jesaei-anchor-podcast-iframe" src="' . esc_url($site_url . '/embed') . '" style="width: 100%;" frameborder="0" scrolling="no" name="jesaei_podcast_iframe"></iframe>';
         $html .= '</div>';
 
         return $html;
@@ -340,3 +514,14 @@ class Main {
 }
 
 $Anchor_Episodes_Index_Main = new Main();
+
+/**
+ * Convenience wrapper for code outside the class (the settings page).
+ */
+function jesaei_is_spotify_url($url) {
+    global $Anchor_Episodes_Index_Main;
+
+    return $Anchor_Episodes_Index_Main instanceof Main
+        ? $Anchor_Episodes_Index_Main->is_spotify_url($url)
+        : false;
+}
