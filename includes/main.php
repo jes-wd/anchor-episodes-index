@@ -55,6 +55,15 @@ class Main {
 
     // shortcode main function
     public function shortcode($atts) {
+        // Block themes render page content BEFORE wp_enqueue_scripts fires, so
+        // on those themes the handles below do not exist yet when this runs.
+        // wp_localize_script() returns false for an unregistered handle,
+        // silently, leaving jesaei_settings undefined; main.js then throws on
+        // it and the player iframe is never given a height, so nothing shows.
+        // wp_register_script() is a no-op for a handle that already exists, so
+        // calling this here is safe on classic themes too.
+        $this->register_scripts();
+
         $shortcode_attributes = shortcode_atts(array(
             'site_url' => '',
             'rss_url' => '',

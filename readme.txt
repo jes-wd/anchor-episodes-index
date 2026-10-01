@@ -4,7 +4,7 @@ Tags: anchor.fm, podcast, embed, spotify
 Requires at least: 4.8
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 2.1.15
+Stable tag: 2.1.16
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -141,3 +141,6 @@ Overrides values set on the settings page:
 
 = 2.1.15 =
 * Update readme
+
+= 2.1.16 =
+* Fixed the player not appearing on block themes, which includes every default WordPress theme since Twenty Twenty-Two. The settings the player needs were never reaching the page, so the player area stayed empty with only the loading dots showing. The episode list was unaffected.
