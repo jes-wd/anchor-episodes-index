@@ -76,7 +76,7 @@ class Functions {
   }
 
 
-  public function get_episode_list_html(int $limit, string $rss_url = null) {
+  public function get_episode_list_html(int $limit, ?string $rss_url = null) {
     $this->options['anchor_rss_url'] = $rss_url;
     require('svgs.php');
 

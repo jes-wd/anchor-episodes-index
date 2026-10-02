@@ -144,3 +144,4 @@ Overrides values set on the settings page:
 
 = 2.1.16 =
 * Fixed the player not appearing on block themes, which includes every default WordPress theme since Twenty Twenty-Two. The settings the player needs were never reaching the page, so the player area stayed empty with only the loading dots showing. The episode list was unaffected.
+* Silenced a deprecation notice on PHP 8.4 that filled the error log on every page view.
