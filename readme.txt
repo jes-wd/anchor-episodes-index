@@ -2,7 +2,7 @@
 Contributors: jeswd
 Tags: anchor.fm, podcast, embed, spotify
 Requires at least: 4.8
-Tested up to: 6.9
+Tested up to: 7.1
 Requires PHP: 7.4
 Stable tag: 2.1.16
 License: GPLv2 or later
